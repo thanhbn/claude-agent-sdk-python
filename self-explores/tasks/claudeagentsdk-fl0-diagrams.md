@@ -1,27 +1,27 @@
-# Claude Agent SDK — Architecture Diagrams
+# Claude Agent SDK — Sơ đồ kiến trúc
 
-> SDK version: 0.1.48 | Date: 2026-03-22 | 15 source files
+> Phiên bản SDK: 0.1.48 | Ngày: 2026-03-22 | 15 file mã nguồn
 
-## Legend
+## Chú giải
 
-| Color | Layer | Description |
+| Màu | Tầng | Mô tả |
 |-------|-------|-------------|
-| Green | Public API | User-facing entry points and decorators |
-| Blue | Internal Processing | Control protocol, message parsing, session management |
-| Orange | Transport | Subprocess I/O, CLI binary discovery, JSON streaming |
-| Gray | External | Claude CLI process, external MCP servers |
-| Pink | Cross-cutting | Types, errors, version info |
+| Xanh lá | API công khai | Điểm vào và decorator hướng user |
+| Xanh dương | Xử lý nội bộ | Giao thức điều khiển, phân tích message, quản lý session |
+| Cam | Transport | I/O subprocess, phát hiện CLI binary, JSON streaming |
+| Xám | Bên ngoài | Tiến trình Claude CLI, MCP server bên ngoài |
+| Hồng | Xuyên suốt | Types, errors, thông tin phiên bản |
 
-**Arrow types:**
-- `──▶` Solid: data flow (requests/responses)
-- `╌╌▶` Dashed: configuration or type dependency
-- Labels describe what flows along the arrow
+**Kiểu mũi tên:**
+- `──▶` Liền: luồng dữ liệu (requests/responses)
+- `╌╌▶` Nét đứt: phụ thuộc cấu hình hoặc kiểu
+- Nhãn mô tả dữ liệu chảy dọc mũi tên
 
 ---
 
-## 1. Main Architecture Diagram
+## 1. Sơ đồ kiến trúc chính
 
-The SDK has two entry points (`query()` for one-shot, `ClaudeSDKClient` for interactive) that converge at the `Query` control protocol handler. Query manages all bidirectional communication with the Claude CLI subprocess through `SubprocessCLITransport`.
+SDK có hai điểm vào (`query()` cho một lần, `ClaudeSDKClient` cho tương tác) hội tụ tại `Query` - bộ xử lý giao thức điều khiển. Query quản lý toàn bộ giao tiếp hai chiều với subprocess Claude CLI thông qua `SubprocessCLITransport`.
 
 ```mermaid
 graph TD
@@ -95,13 +95,13 @@ graph TD
     class TYPES,ERRS,SESS crosscut
 ```
 
-**How to read:** Top = user application code, bottom = CLI subprocess. Data flows down (requests) and up (responses). The two entry points (left: `query()`, right: `ClaudeSDKClient`) converge at `Query`, which is the central hub managing all communication with the CLI.
+**Cách đọc:** Trên = code ứng dụng user, dưới = subprocess CLI. Dữ liệu chảy xuống (requests) và lên (responses). Hai điểm vào (trái: `query()`, phải: `ClaudeSDKClient`) hội tụ tại `Query`, đây là trung tâm điều phối quản lý toàn bộ giao tiếp với CLI.
 
 ---
 
-## 2. Detail: Control Protocol Message Routing
+## 2. Chi tiết: Định tuyến message giao thức điều khiển
 
-Inside `Query._read_messages()`, incoming JSON from the CLI is routed to three different handlers based on the `type` field.
+Bên trong `Query._read_messages()`, JSON đến từ CLI được định tuyến đến ba handler khác nhau dựa trên trường `type`.
 
 ```mermaid
 graph TD
@@ -153,9 +153,9 @@ graph TD
 
 ---
 
-## 3. Detail: Hook System Architecture
+## 3. Chi tiết: Kiến trúc hệ thống Hook
 
-Shows how hooks are registered during `initialize()` and dispatched when the CLI triggers them.
+Hiện cách hooks được đăng ký trong `initialize()` và được dispatch khi CLI kích hoạt chúng.
 
 ```mermaid
 graph TD
@@ -209,13 +209,13 @@ graph TD
     class RESP,DECIDE,APPROVE,BLOCK resp
 ```
 
-**Hook events:** PreToolUse, PostToolUse, PostToolUseFailure, UserPromptSubmit, Stop, SubagentStart, SubagentStop, PreCompact, Notification, PermissionRequest
+**Sự kiện hook:** PreToolUse, PostToolUse, PostToolUseFailure, UserPromptSubmit, Stop, SubagentStart, SubagentStop, PreCompact, Notification, PermissionRequest
 
 ---
 
-## 4. Detail: SDK MCP vs External MCP
+## 4. Chi tiết: SDK MCP vs External MCP
 
-Shows the key architectural distinction: SDK MCP tools execute in-process, while external MCP servers run as separate subprocesses managed by the CLI.
+Hiện sự khác biệt kiến trúc then chốt: SDK MCP tools thực thi in-process, trong khi MCP server bên ngoài chạy như subprocess riêng do CLI quản lý.
 
 ```mermaid
 graph LR
@@ -266,20 +266,20 @@ graph LR
     class DECIDE2 cli
 ```
 
-**Key insight:** SDK MCP tools never leave the Python process. The CLI sends tool call requests to the SDK via `control_request`, and the SDK executes the `@tool`-decorated function directly and returns the result via `control_response`.
+**Hiểu biết then chốt:** SDK MCP tools không bao giờ rời tiến trình Python. CLI gửi tool call requests đến SDK qua `control_request`, và SDK thực thi hàm `@tool` trực tiếp rồi trả kết quả qua `control_response`.
 
 ---
 
-## 5. Detail: Error Hierarchy
+## 5. Chi tiết: Cây lỗi (Error Hierarchy)
 
 ```mermaid
 graph TD
-    BASE["ClaudeSDKError<br/><i>base exception</i>"]
-    CONN["CLIConnectionError<br/><i>cannot connect to CLI</i>"]
-    NOTF["CLINotFoundError<br/><i>CLI binary not found</i>"]
-    PROC["ProcessError<br/><i>CLI process failed<br/>exit_code + stderr</i>"]
-    JSON["CLIJSONDecodeError<br/><i>invalid JSON from stdout</i>"]
-    PARSE["MessageParseError<br/><i>valid JSON but unknown<br/>message structure</i>"]
+    BASE["ClaudeSDKError<br/><i>exception gốc</i>"]
+    CONN["CLIConnectionError<br/><i>không kết nối được CLI</i>"]
+    NOTF["CLINotFoundError<br/><i>không tìm thấy CLI binary</i>"]
+    PROC["ProcessError<br/><i>tiến trình CLI lỗi<br/>exit_code + stderr</i>"]
+    JSON["CLIJSONDecodeError<br/><i>JSON không hợp lệ từ stdout</i>"]
+    PARSE["MessageParseError<br/><i>JSON hợp lệ nhưng cấu trúc<br/>message không nhận biết</i>"]
 
     BASE --> CONN
     BASE --> PROC
@@ -298,18 +298,18 @@ graph TD
 
 ---
 
-## 6. Component Inventory
+## 6. Kiểm kê thành phần
 
-| Component | File | Lines | Layer | Role |
+| Thành phần | File | Dòng | Tầng | Vai trò |
 |-----------|------|-------|-------|------|
-| `query()` | `query.py` | 124 | Public API | One-shot async generator entry point |
-| `ClaudeSDKClient` | `client.py` | ~400 | Public API | Stateful bidirectional session manager |
-| `@tool` + `create_sdk_mcp_server()` | `__init__.py` | 445 | Public API | MCP tool definition and server factory |
-| `InternalClient` | `_internal/client.py` | 146 | Internal | Orchestrates query() lifecycle |
-| `Query` | `_internal/query.py` | ~500 | Internal | Control protocol handler (most complex) |
-| `MessageParser` | `_internal/message_parser.py` | ~200 | Internal | JSON dict → typed Message objects |
-| `sessions` | `_internal/sessions.py` | ~150 | Internal | Historical session reader |
-| `SubprocessCLITransport` | `_internal/transport/subprocess_cli.py` | ~400 | Transport | CLI subprocess lifecycle + JSON streaming |
-| `Transport` (abstract) | `_internal/transport/__init__.py` | ~50 | Transport | Abstract base (connect, write, read, close) |
-| `types.py` | `types.py` | ~800 | Cross-cutting | All public types (largest file) |
-| `_errors.py` | `_errors.py` | 57 | Cross-cutting | Error hierarchy |
+| `query()` | `query.py` | 124 | API công khai | Điểm vào async generator một lần |
+| `ClaudeSDKClient` | `client.py` | ~400 | API công khai | Quản lý session hai chiều có trạng thái |
+| `@tool` + `create_sdk_mcp_server()` | `__init__.py` | 445 | API công khai | Định nghĩa MCP tool và factory server |
+| `InternalClient` | `_internal/client.py` | 146 | Nội bộ | Điều phối vòng đời query() |
+| `Query` | `_internal/query.py` | ~500 | Nội bộ | Xử lý giao thức điều khiển (phức tạp nhất) |
+| `MessageParser` | `_internal/message_parser.py` | ~200 | Nội bộ | JSON dict → đối tượng Message có kiểu |
+| `sessions` | `_internal/sessions.py` | ~150 | Nội bộ | Đọc session lịch sử |
+| `SubprocessCLITransport` | `_internal/transport/subprocess_cli.py` | ~400 | Transport | Vòng đời subprocess CLI + JSON streaming |
+| `Transport` (trừu tượng) | `_internal/transport/__init__.py` | ~50 | Transport | Base trừu tượng (connect, write, read, close) |
+| `types.py` | `types.py` | ~800 | Xuyên suốt | Tất cả kiểu công khai (file lớn nhất) |
+| `_errors.py` | `_errors.py` | 57 | Xuyên suốt | Cây lỗi (Error hierarchy) |

@@ -2,224 +2,224 @@
 date: 2026-03-21
 type: task-worklog
 task: claudeagentsdk-1ig
-title: "Feynman learning"
-status: open
+title: "Viết nội dung Feynman learning"
+status: completed
 detailed_at: 2026-03-21
 detail_score: ready-for-dev
 tags: [learning, feynman, explanation, mental-model, phase-3]
 ---
 
-# Feynman Learning — Detailed Design
+# Feynman Learning — Thiết kế chi tiết
 
-## 1. Objective
+## 1. Mục tiêu
 
-Write Feynman-method learning content (~2000 words) that enables a Python developer who knows async/await but has never used claude-agent-sdk to understand its core concepts through simple analogies, gap identification, and a mental model diagram.
+Viết nội dung học theo phương pháp Feynman (~2000 từ) giúp lập trình viên Python biết async/await nhưng chưa từng dùng claude-agent-sdk có thể hiểu các khái niệm cốt lõi thông qua phép so sánh đơn giản, xác định lỗ hổng kiến thức, và sơ đồ mô hình tư duy.
 
-## 2. Scope
+## 2. Phạm vi
 
-**In-scope:**
-- Core concepts ONLY: `query()`, `ClaudeSDKClient`, hooks, MCP in-process tools
-- 4 clear analogies mapped to these concepts
-- Identified knowledge gaps and their resolutions
-- Mental model diagram (Mermaid or ASCII)
-- Prerequisite statement for target audience
-- Hard limit: ~2000 words
+**Trong phạm vi:**
+- Chỉ các khái niệm cốt lõi: `query()`, `ClaudeSDKClient`, hooks, MCP tools in-process
+- 4 phép so sánh rõ ràng ánh xạ đến các khái niệm này
+- Xác định lỗ hổng kiến thức và cách giải quyết
+- Sơ đồ mô hình tư duy (Mermaid hoặc ASCII)
+- Ghi rõ kiến thức tiên quyết cho đối tượng mục tiêu
+- Giới hạn cứng: ~2000 từ
 
-**Out-of-scope:**
-- Advanced topics: plugins, agent orchestration, session persistence, sandbox mode
-- API reference or exhaustive parameter documentation
-- Installation/setup instructions (covered in cheatsheet)
-- Comparison with other SDKs or tools
-- Code examples longer than 10 lines (this is conceptual, not a tutorial)
+**Ngoài phạm vi:**
+- Chủ đề nâng cao: plugins, điều phối agent, lưu trữ session, chế độ sandbox
+- Tham chiếu API hoặc tài liệu tham số đầy đủ
+- Hướng dẫn cài đặt/thiết lập (đã bao phủ trong cheatsheet)
+- So sánh với SDK hoặc công cụ khác
+- Ví dụ code dài hơn 10 dòng (đây là tài liệu khái niệm, không phải tutorial)
 
-## 3. Input / Output
+## 3. Đầu vào / Đầu ra
 
-**Input:**
-- `self-explores/context/claude-agent-sdk-overview.md` (from task aca — executive summary)
-- `self-explores/context/claude-agent-sdk-cheatsheet.md` (from task aca — quick reference)
-- `self-explores/context/code-architecture.md` (from task d0g — for gap-filling)
-- Source code (for Step 3 gap-filling only): `src/claude_agent_sdk/_internal/query.py`, `src/claude_agent_sdk/_internal/transport/subprocess_cli.py`
+**Đầu vào:**
+- `self-explores/context/claude-agent-sdk-overview.md` (từ task aca — tóm tắt tổng quan)
+- `self-explores/context/claude-agent-sdk-cheatsheet.md` (từ task aca — tham chiếu nhanh)
+- `self-explores/context/code-architecture.md` (từ task d0g — để lấp lỗ hổng kiến thức)
+- Mã nguồn (chỉ cho Bước 3 lấp lỗ hổng): `src/claude_agent_sdk/_internal/query.py`, `src/claude_agent_sdk/_internal/transport/subprocess_cli.py`
 
-**Output:**
-- `self-explores/learnings/2026-03-21-claude-agent-sdk-feynman.md` — single Markdown file, ~2000 words
+**Đầu ra:**
+- `self-explores/learnings/2026-03-21-claude-agent-sdk-feynman.md` — file Markdown duy nhất, ~2000 từ
 
-## 4. Dependencies
+## 4. Phụ thuộc (Dependencies)
 
-- `claudeagentsdk-aca` (executive summary + cheatsheet) — MUST be completed first; provides the synthesized understanding to explain simply
-- Source code access for Step 3 (gap-filling) — no task dependency, just file access
+- `claudeagentsdk-aca` (tóm tắt tổng quan + cheatsheet) — PHẢI hoàn thành trước; cung cấp hiểu biết tổng hợp cần giải thích đơn giản
+- Truy cập mã nguồn cho Bước 3 (lấp lỗ hổng) — không phụ thuộc task, chỉ cần truy cập file
 
-## 5. Flow
+## 5. Luồng xử lý (Flow)
 
-### Step 1: Feynman Step 1 — Explain Simply with Analogies (~15 min)
+### Bước 1: Feynman Bước 1 — Giải thích đơn giản bằng phép so sánh (~15 phút)
 
-Write the first draft using 4 core analogies. Each analogy must:
-- Be relatable to a Python developer (use programming metaphors where helpful)
-- Map cleanly to the actual SDK behavior (no misleading simplifications)
-- Be introduced with "Think of X as Y" pattern
+Viết bản thảo đầu tiên dùng 4 phép so sánh cốt lõi. Mỗi phép so sánh phải:
+- Dễ liên hệ với lập trình viên Python (dùng ẩn dụ lập trình khi hữu ích)
+- Ánh xạ chính xác đến hành vi SDK thực tế (không đơn giản hóa gây hiểu nhầm)
+- Được giới thiệu theo mẫu "Hãy nghĩ X như là Y"
 
-**Analogy 1: query() = Sending a Letter**
-- You write a letter (prompt), put it in an envelope (options), drop it in the mailbox (query function)
-- The postal service (CLI subprocess) delivers it, processes it, and sends back a reply
-- You get the reply as a stream of pages (AsyncIterator[Message]) — you read them as they arrive
-- When the last page arrives, the conversation is over. No way to reply without sending a new letter
-- Key insight: fire-and-forget, stateless, automatic cleanup
+**Phép so sánh 1: query() = Gửi thư**
+- Bạn viết thư (prompt), bỏ vào phong bì (options), thả vào hòm thư (hàm query)
+- Bưu điện (subprocess CLI) chuyển đi, xử lý, và gửi lại phản hồi
+- Bạn nhận phản hồi dưới dạng luồng từng trang (AsyncIterator[Message]) — bạn đọc khi chúng đến
+- Khi trang cuối cùng đến, cuộc trao đổi kết thúc. Không có cách trả lời nếu không gửi thư mới
+- Điểm mấu chốt: gửi-và-quên (fire-and-forget), không trạng thái, tự dọn dẹp
 
-**Analogy 2: ClaudeSDKClient = Phone Call**
-- You pick up the phone (async with ClaudeSDKClient)
-- The connection is established (initialize handshake)
-- You talk (query), listen (receive_response), talk again (follow-up) — it's a conversation
-- You can interrupt mid-sentence (client.interrupt())
-- When you hang up (exit async with), the line is closed and resources freed
-- Key insight: stateful, bidirectional, you control the lifecycle
+**Phép so sánh 2: ClaudeSDKClient = Cuộc gọi điện thoại**
+- Bạn nhấc máy (async with ClaudeSDKClient)
+- Kết nối được thiết lập (bắt tay initialize)
+- Bạn nói (query), nghe (receive_response), nói lại (tiếp nối) — đó là cuộc hội thoại
+- Bạn có thể ngắt giữa câu (client.interrupt())
+- Khi bạn cúp máy (thoát async with), đường dây đóng và tài nguyên được giải phóng
+- Điểm mấu chốt: có trạng thái, hai chiều, bạn kiểm soát vòng đời
 
-**Analogy 3: Transport = The Pipe Under the Floor**
-- Between your Python code and the CLI, there's a pipe (SubprocessCLITransport)
-- You never touch the pipe directly — you talk to query() or ClaudeSDKClient, and they handle the plumbing
-- The pipe carries JSON messages in both directions (stdin = you to CLI, stdout = CLI to you)
-- The pipe is always streaming — even query() uses stream mode internally
-- Key insight: abstraction layer, JSON protocol, you don't need to know the pipe exists
+**Phép so sánh 3: Transport = Ống nước dưới sàn nhà**
+- Giữa code Python của bạn và CLI, có một ống nước (SubprocessCLITransport)
+- Bạn không bao giờ chạm trực tiếp vào ống — bạn nói chuyện với query() hoặc ClaudeSDKClient, và chúng lo phần ống nước
+- Ống chuyển JSON messages hai chiều (stdin = bạn đến CLI, stdout = CLI đến bạn)
+- Ống luôn streaming — ngay cả query() cũng dùng chế độ stream nội bộ
+- Điểm mấu chốt: tầng trừu tượng, giao thức JSON, bạn không cần biết ống tồn tại
 
-**Analogy 4: Hooks = Checkpoint Guards**
-- Imagine the CLI is walking down a corridor (executing a task)
-- At certain doors (hook points: PreToolUse, PostToolUse, Stop), there's a guard (your hook function)
-- The guard checks the situation and decides: "go ahead" (approve), "stop" (block), or "take a detour" (modify)
-- Guards are async — they can take time to decide without blocking the whole building
-- You install guards by registering hook matchers that specify which doors they watch
-- Key insight: intercept points for safety and control, non-blocking, pattern-matched
+**Phép so sánh 4: Hooks = Lính gác tại trạm kiểm soát**
+- Tưởng tượng CLI đang đi dọc hành lang (thực thi tác vụ)
+- Tại một số cửa (điểm hook: PreToolUse, PostToolUse, Stop), có lính gác (hàm hook của bạn)
+- Lính gác kiểm tra tình hình và quyết định: "đi tiếp" (approve), "dừng lại" (block), hoặc "đi đường khác" (modify)
+- Lính gác là async — họ có thể suy nghĩ mà không chặn toàn bộ tòa nhà
+- Bạn cài đặt lính gác bằng cách đăng ký hook matchers chỉ định cửa nào họ canh
+- Điểm mấu chốt: điểm chặn để an toàn và kiểm soát, không chặn (non-blocking), khớp mẫu (pattern-matched)
 
-**Bonus Analogy: MCP Tools = Your Own Toolbox**
-- The CLI comes with built-in tools (Bash, Read, Write, etc.)
-- MCP in-process tools let you add your own tools to the toolbox using `@tool` decorator
-- When Claude decides to use your tool, the request stays inside your Python process (no subprocess)
-- Think of it as a plugin system where you teach Claude new skills
-- Key insight: extensibility, in-process execution, decorator-based
+**Phép so sánh thêm: MCP Tools = Hộp dụng cụ riêng**
+- CLI đi kèm các công cụ sẵn có (Bash, Read, Write, v.v.)
+- MCP tools in-process cho phép bạn thêm công cụ riêng vào hộp dùng decorator `@tool`
+- Khi Claude quyết định dùng công cụ của bạn, yêu cầu ở nguyên trong tiến trình Python (không subprocess)
+- Hãy nghĩ như hệ thống plugin nơi bạn dạy Claude kỹ năng mới
+- Điểm mấu chốt: khả năng mở rộng, thực thi in-process, dựa trên decorator
 
-Write each analogy as 2-3 paragraphs. Include a brief "What this maps to in code" callout after each.
+Viết mỗi phép so sánh thành 2-3 đoạn. Thêm callout "Ánh xạ đến code" sau mỗi phép.
 
-**Verify:** Each analogy is understandable without SDK knowledge. Each maps to a real SDK concept. No analogy is misleading about actual behavior.
+**Kiểm tra:** Mỗi phép so sánh hiểu được mà không cần biết SDK. Mỗi phép ánh xạ đến khái niệm SDK thực. Không phép nào gây hiểu nhầm về hành vi thực tế.
 
-### Step 2: Feynman Step 2 — Identify Knowledge Gaps (~10 min)
+### Bước 2: Feynman Bước 2 — Xác định lỗ hổng kiến thức (~10 phút)
 
-After writing the simple explanations, identify what's still confusing or hand-wavy. List the gaps:
+Sau khi viết giải thích đơn giản, xác định những gì vẫn còn mơ hồ hoặc chung chung. Liệt kê lỗ hổng:
 
-**Gap 1: Control Protocol**
-- "JSON messages over stdin/stdout" — but HOW? What's the message format? How are requests matched to responses?
-- The `request_id` matching mechanism is non-obvious
-- The initialize handshake is a specific protocol, not just "start talking"
+**Lỗ hổng 1: Giao thức điều khiển (Control Protocol)**
+- "JSON messages qua stdin/stdout" — nhưng CỤ THỂ thế nào? Format message ra sao? Làm sao khớp request với response?
+- Cơ chế khớp `request_id` không hiển nhiên
+- Bắt tay initialize là giao thức cụ thể, không phải chỉ "bắt đầu nói chuyện"
 
-**Gap 2: Streaming Model**
-- "Always streaming internally" — what does this mean for query() which returns one response?
-- How does the SDK buffer/parse partial JSON from a stream?
-- What happens when the CLI sends multiple JSON objects on a single stdout line?
+**Lỗ hổng 2: Mô hình streaming**
+- "Luôn streaming nội bộ" — nghĩa là gì cho query() vốn trả về một phản hồi?
+- SDK đệm/phân tích JSON từng phần từ stream thế nào?
+- Chuyện gì xảy ra khi CLI gửi nhiều đối tượng JSON trên cùng một dòng stdout?
 
-**Gap 3: Hook Callback Mechanism**
-- How does the CLI "pause" and wait for the hook response?
-- What's the threading model? Does the hook block the message stream?
-- How are async_ and continue_ field name conversions handled?
+**Lỗ hổng 3: Cơ chế Hook Callback**
+- CLI "tạm dừng" và chờ hook response thế nào?
+- Mô hình luồng (threading model) ra sao? Hook có chặn message stream không?
+- Chuyển đổi tên trường async_ và continue_ được xử lý thế nào?
 
-**Gap 4: anyio Async Model**
-- Why anyio instead of plain asyncio?
-- What are task groups and how does the SDK use them?
-- Does this mean the SDK works with trio too?
+**Lỗ hổng 4: Mô hình async anyio**
+- Tại sao anyio thay vì asyncio thuần?
+- Task groups là gì và SDK dùng chúng thế nào?
+- Điều này có nghĩa SDK hoạt động với trio nữa không?
 
-Write each gap as a question the reader would naturally ask after reading the analogies.
+Viết mỗi lỗ hổng dạng câu hỏi mà người đọc tự nhiên sẽ hỏi sau khi đọc các phép so sánh.
 
-**Verify:** At least 4 gaps identified. Each is a genuine confusion point, not a trivial detail.
+**Kiểm tra:** Ít nhất 4 lỗ hổng được xác định. Mỗi lỗ hổng là điểm nhầm lẫn thực sự, không phải chi tiết vặt.
 
-### Step 3: Feynman Step 3 — Go Back to Source to Fix Gaps (~10 min)
+### Bước 3: Feynman Bước 3 — Quay lại mã nguồn để lấp lỗ hổng (~10 phút)
 
-For each gap, read the relevant source code and write a clear resolution:
+Với mỗi lỗ hổng, đọc mã nguồn liên quan và viết giải đáp rõ ràng:
 
-**Resolving Gap 1:** Read `_internal/query.py` — describe the control protocol:
-- Each request has a `request_id` (UUID)
-- Responses include the matching `request_id`
-- The `Query` class maintains a pending requests dict and resolves futures when responses arrive
+**Giải quyết Lỗ hổng 1:** Đọc `_internal/query.py` — mô tả giao thức điều khiển:
+- Mỗi request có `request_id` (UUID)
+- Responses bao gồm `request_id` khớp
+- Lớp `Query` duy trì dict các pending requests và giải quyết futures khi responses đến
 
-**Resolving Gap 2:** Read `_internal/transport/subprocess_cli.py` — describe streaming:
-- Transport reads stdout line by line
-- Each line is a complete JSON object (newline-delimited JSON, aka NDJSON)
-- `MessageParser` converts raw dicts into typed dataclasses
-- query() collects the stream internally; ClaudeSDKClient exposes it
+**Giải quyết Lỗ hổng 2:** Đọc `_internal/transport/subprocess_cli.py` — mô tả streaming:
+- Transport đọc stdout từng dòng
+- Mỗi dòng là một đối tượng JSON hoàn chỉnh (JSON phân cách bằng newline, tức NDJSON)
+- `MessageParser` chuyển raw dicts thành dataclasses có kiểu
+- query() thu thập stream nội bộ; ClaudeSDKClient phơi bày stream ra ngoài
 
-**Resolving Gap 3:** Read `_internal/query.py` hook handling:
-- CLI sends a hook callback request (just another JSON message with a request_id)
-- Query receives it, calls the registered Python async function
-- The Python function returns a decision
-- Query sends the decision back as a response
-- CLI was waiting for this response before continuing — it's synchronous from CLI's perspective
+**Giải quyết Lỗ hổng 3:** Đọc `_internal/query.py` phần xử lý hook:
+- CLI gửi hook callback request (chỉ là JSON message khác với request_id)
+- Query nhận nó, gọi hàm async Python đã đăng ký
+- Hàm Python trả quyết định
+- Query gửi quyết định ngược lại dạng response
+- CLI đang chờ response này trước khi tiếp tục — đồng bộ từ góc nhìn CLI
 
-**Resolving Gap 4:** Explain anyio briefly:
-- anyio is an abstraction over asyncio and trio
-- The SDK uses `anyio.create_task_group()` for concurrent operations
-- In practice, most users will use asyncio — trio support is a bonus
-- Task groups ensure all spawned tasks are properly cleaned up
+**Giải quyết Lỗ hổng 4:** Giải thích ngắn gọn anyio:
+- anyio là lớp trừu tượng trên asyncio và trio
+- SDK dùng `anyio.create_task_group()` cho các thao tác đồng thời
+- Thực tế, hầu hết người dùng sẽ dùng asyncio — hỗ trợ trio là bonus
+- Task groups đảm bảo tất cả tasks được dọn dẹp đúng cách
 
-**Verify:** Each gap has a concrete resolution. Resolutions are accurate (cross-referenced with source code). Language remains simple.
+**Kiểm tra:** Mỗi lỗ hổng có giải đáp cụ thể. Giải đáp chính xác (đối chiếu mã nguồn). Ngôn ngữ vẫn đơn giản.
 
-### Step 4: Feynman Step 4 — Simplify and Create Mental Model Diagram (~10 min)
+### Bước 4: Feynman Bước 4 — Đơn giản hóa và tạo sơ đồ mô hình tư duy (~10 phút)
 
-Create a single mental model diagram that ties everything together. This should be the "aha moment" visual.
+Tạo một sơ đồ mô hình tư duy kết nối mọi thứ lại. Đây nên là hình ảnh "eureka" (khoảnh khắc hiểu ra).
 
-**Mental Model Diagram (Mermaid):**
-- Show the 4 layers: Your Code -> SDK Entry Point -> Query Engine -> Transport -> CLI
-- Show hooks as side-channels at the Query Engine layer
-- Show MCP tools as extensions at the Query Engine layer
-- Use color coding or labels for "you write this" vs "SDK handles this" vs "CLI handles this"
+**Sơ đồ mô hình tư duy (Mermaid):**
+- Hiện 4 tầng: Code của bạn -> Điểm vào SDK -> Query Engine -> Transport -> CLI
+- Hiện hooks dạng kênh phụ tại tầng Query Engine
+- Hiện MCP tools dạng phần mở rộng tại tầng Query Engine
+- Dùng mã màu hoặc nhãn cho "bạn viết phần này" vs "SDK xử lý phần này" vs "CLI xử lý phần này"
 
-**Simplification pass:**
-- Re-read the entire document
-- Remove any jargon that wasn't defined
-- Replace passive voice with active voice
-- Ensure every paragraph answers "so what?" — why does the reader care?
-- Add a "What to do next" section pointing to the cheatsheet for hands-on code
+**Lượt đơn giản hóa:**
+- Đọc lại toàn bộ tài liệu
+- Loại bỏ mọi thuật ngữ chuyên môn chưa được định nghĩa
+- Thay thế câu bị động bằng câu chủ động
+- Đảm bảo mỗi đoạn trả lời "vậy sao?" — tại sao người đọc quan tâm?
+- Thêm phần "Tiếp theo làm gì" chỉ đến cheatsheet cho code thực hành
 
-**Verify:** Diagram renders in Mermaid. Document flows logically from analogies -> gaps -> resolutions -> mental model. Total word count is ~2000 (+/- 200).
+**Kiểm tra:** Sơ đồ render được trong Mermaid. Tài liệu chảy logic từ phép so sánh -> lỗ hổng -> giải đáp -> mô hình tư duy. Tổng số từ ~2000 (+/- 200).
 
-## 6. Edge Cases & Error Handling
+## 6. Trường hợp biên & Xử lý lỗi
 
-| Case | Trigger | Expected | Recovery |
+| Trường hợp | Điều kiện kích hoạt | Hành vi mong đợi | Cách khôi phục |
 |------|---------|----------|----------|
-| Content too technical | Used jargon without definition, or explained implementation details | Target reader (2nd-year CS student test) would not understand | Apply "explain like I'm teaching a junior dev" filter; replace jargon with plain English |
-| Content too long | Exceeded 2000 words | Violates format constraint | Cut: remove redundant explanations, merge similar paragraphs, move details to footnotes |
-| Analogy is misleading | Analogy maps incorrectly to actual behavior (e.g., "fire-and-forget" implies no response) | Reader builds wrong mental model | Validate each analogy against actual code behavior; add "where the analogy breaks" callout |
-| Source code changed since architecture analysis | SDK updated between task d0g and task 1ig | Gap resolutions may be inaccurate | Always verify gap resolutions against current source code, not just architecture doc |
-| Reader doesn't know async | Content assumes async knowledge | Reader is lost from the start | Add explicit prerequisite statement at the top: "Prerequisite: Python async/await (asyncio basics)" |
+| Nội dung quá kỹ thuật | Dùng thuật ngữ chuyên môn chưa định nghĩa, hoặc giải thích chi tiết triển khai | Người đọc mục tiêu (test sinh viên năm 2) sẽ không hiểu | Áp dụng bộ lọc "giải thích như đang dạy lập trình viên mới"; thay thuật ngữ bằng tiếng thường |
+| Nội dung quá dài | Vượt quá 2000 từ | Vi phạm ràng buộc format | Cắt: bỏ giải thích trùng lặp, gộp đoạn tương tự, chuyển chi tiết vào chú thích |
+| Phép so sánh gây hiểu nhầm | Phép so sánh ánh xạ sai hành vi thực (VD: "gửi-và-quên" ngụ ý không có phản hồi) | Người đọc xây dựng mô hình tư duy sai | Xác minh mỗi phép so sánh theo hành vi code thực; thêm callout "phép so sánh bị sai ở đâu" |
+| Mã nguồn thay đổi kể từ phân tích kiến trúc | SDK cập nhật giữa task d0g và task 1ig | Giải đáp lỗ hổng có thể sai | Luôn xác minh giải đáp theo mã nguồn hiện tại, không chỉ tài liệu kiến trúc |
+| Người đọc không biết async | Nội dung giả định biết async | Người đọc bị lạc ngay từ đầu | Thêm ghi chú tiên quyết rõ ràng ở đầu: "Tiên quyết: Python async/await (cơ bản asyncio)" |
 
-## 7. Acceptance Criteria
+## 7. Tiêu chí chấp nhận (Acceptance Criteria)
 
-- **Happy 1:** Given the Feynman learning content is written, When a Python async developer who has never used claude-agent-sdk reads it, Then they can explain what query(), ClaudeSDKClient, hooks, and MCP tools do without looking at documentation, and can write a working script using query()
-- **Happy 2:** Given the content, Then it contains 4 clear analogies for core concepts (query, client, hooks, MCP), each with a "maps to in code" callout, and includes a mental model diagram that renders in Mermaid
-- **Negative:** Given a reader who does not know Python async/await, When they start reading, Then the prerequisite section at the top explicitly states "Prerequisite: Python async/await" so they know to learn that first
+- **Thành công 1:** Khi nội dung Feynman learning viết xong, Khi lập trình viên Python async chưa từng dùng claude-agent-sdk đọc nó, Thì họ có thể giải thích query(), ClaudeSDKClient, hooks, và MCP tools làm gì mà không cần xem tài liệu, và có thể viết script hoạt động dùng query()
+- **Thành công 2:** Khi nội dung hoàn thành, Thì chứa 4 phép so sánh rõ ràng cho các khái niệm cốt lõi (query, client, hooks, MCP), mỗi phép có callout "ánh xạ đến code", và bao gồm sơ đồ mô hình tư duy render được trong Mermaid
+- **Thất bại:** Khi người đọc không biết Python async/await, Khi họ bắt đầu đọc, Thì phần tiên quyết ở đầu ghi rõ "Tiên quyết: Python async/await" để họ biết cần học trước
 
-## 8. Technical Notes
+## 8. Ghi chú kỹ thuật
 
-- Feynman method: (1) Choose concept, (2) Explain simply, (3) Identify gaps, (4) Simplify further. This task follows all 4 steps.
-- Word count target: ~2000 words. Check with `wc -w`. Acceptable range: 1800-2200.
-- Target audience precisely: "Python developer who can write `async def main(): await asyncio.gather(...)` but has never heard of claude-agent-sdk"
-- Mental model diagram: use Mermaid `graph TD` (top-down) for the layered architecture view
-- Analogies should be culturally neutral (avoid sports metaphors, country-specific references)
-- The "2nd-year CS student test": after writing each section, ask "would a 2nd-year CS student who knows Python understand this?" If no, simplify.
-- File location: `self-explores/learnings/` directory (may need to be created)
+- Phương pháp Feynman: (1) Chọn khái niệm, (2) Giải thích đơn giản, (3) Xác định lỗ hổng, (4) Đơn giản hóa tiếp. Task này thực hiện cả 4 bước.
+- Mục tiêu số từ: ~2000 từ. Kiểm tra bằng `wc -w`. Phạm vi chấp nhận: 1800-2200.
+- Đối tượng mục tiêu chính xác: "Lập trình viên Python có thể viết `async def main(): await asyncio.gather(...)` nhưng chưa nghe nói đến claude-agent-sdk"
+- Sơ đồ mô hình tư duy: dùng Mermaid `graph TD` (trên-xuống) cho cái nhìn kiến trúc phân tầng
+- Phép so sánh nên trung lập văn hóa (tránh ẩn dụ thể thao, tham chiếu cụ thể quốc gia)
+- "Test sinh viên năm 2": sau khi viết mỗi phần, hỏi "sinh viên năm 2 biết Python có hiểu được không?" Nếu không, đơn giản hóa.
+- Vị trí file: thư mục `self-explores/learnings/` (có thể cần tạo)
 
-## 9. Risks
+## 9. Rủi ro
 
-- **Risk:** Analogies oversimplify to the point of being wrong, causing readers to build incorrect mental models. **Mitigation:** Each analogy includes a "where the analogy breaks" note. Cross-validate each analogy against the source code, not just the architecture doc.
-- **Risk:** The Feynman approach requires genuine understanding; if the writer doesn't fully grasp the SDK, the gaps will be superficial. **Mitigation:** Step 3 requires reading actual source code for each gap, not just architecture summaries. If a gap can't be resolved from the code, it's explicitly noted.
-- **Risk:** 2000 words may not be enough to cover 4 concepts with analogies + gaps + resolutions + diagram. **Mitigation:** Focus on the mental model, not exhaustive detail. Each concept gets ~400 words (analogy + gap + resolution), leaving ~400 words for intro, diagram, and conclusion.
-- **Risk:** The mental model diagram may oversimplify the layered architecture. **Mitigation:** The diagram is a complement to the text, not a replacement. Label it "simplified mental model" and link to the detailed sequence diagrams from task 554.
+- **Rủi ro:** Phép so sánh đơn giản hóa quá mức đến sai, khiến người đọc xây dựng mô hình tư duy sai. **Giảm thiểu:** Mỗi phép so sánh có ghi chú "phép so sánh bị sai ở đâu". Đối chiếu mỗi phép với mã nguồn, không chỉ tài liệu kiến trúc.
+- **Rủi ro:** Phương pháp Feynman yêu cầu hiểu biết thực sự; nếu người viết không nắm vững SDK, lỗ hổng sẽ hời hợt. **Giảm thiểu:** Bước 3 yêu cầu đọc mã nguồn thực cho mỗi lỗ hổng, không chỉ tóm tắt kiến trúc. Nếu lỗ hổng không giải quyết được từ code, ghi rõ.
+- **Rủi ro:** 2000 từ có thể không đủ để bao phủ 4 khái niệm với phép so sánh + lỗ hổng + giải đáp + sơ đồ. **Giảm thiểu:** Tập trung vào mô hình tư duy, không phải chi tiết đầy đủ. Mỗi khái niệm ~400 từ (phép so sánh + lỗ hổng + giải đáp), còn ~400 từ cho giới thiệu, sơ đồ, và kết luận.
+- **Rủi ro:** Sơ đồ mô hình tư duy có thể đơn giản hóa quá mức kiến trúc phân tầng. **Giảm thiểu:** Sơ đồ bổ sung cho text, không thay thế. Gắn nhãn "mô hình tư duy đơn giản hóa" và link đến sơ đồ tuần tự chi tiết từ task 554.
 
-## Worklog
+## Nhật ký công việc (Worklog)
 
-### [11:15] Bat dau + Hoan thanh
-**Ket qua:**
-- Viet Feynman learning content: 1880 tu (trong range 1800-2200)
-- 4 Feynman steps day du:
-  1. Simple explanations voi 5 analogies: query=Letter, Client=Phone, Transport=Pipe, Hooks=Guards, MCP=Toolbox
-  2. Identified 4 gaps: control protocol, streaming model, hook pause mechanism, anyio
-  3. Resolved gaps tu source code knowledge
-  4. Mental model diagram (Mermaid graph TD) + simplification pass
-- Code examples moi analogy (3-10 dong)
-- "What to do next" section link den cheatsheet + workshop video
+### [11:15] Bắt đầu + Hoàn thành
+**Kết quả:**
+- Viết nội dung Feynman learning: 1880 từ (trong phạm vi 1800-2200)
+- 4 bước Feynman đầy đủ:
+  1. Giải thích đơn giản với 5 phép so sánh: query=Thư, Client=Điện thoại, Transport=Ống nước, Hooks=Lính gác, MCP=Hộp dụng cụ
+  2. Xác định 4 lỗ hổng: giao thức điều khiển, mô hình streaming, cơ chế tạm dừng hook, anyio
+  3. Giải quyết lỗ hổng từ kiến thức mã nguồn
+  4. Sơ đồ mô hình tư duy (Mermaid graph TD) + lượt đơn giản hóa
+- Ví dụ code cho mỗi phép so sánh (3-10 dòng)
+- Phần "Tiếp theo làm gì" link đến cheatsheet + video workshop
 
-**Files tao:**
-- self-explores/learnings/2026-03-21-claude-agent-sdk-feynman.md (1880 words)
+**File đã tạo:**
+- self-explores/learnings/2026-03-21-claude-agent-sdk-feynman.md (1880 từ)

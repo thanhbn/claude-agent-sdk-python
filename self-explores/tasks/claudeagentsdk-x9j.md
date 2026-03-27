@@ -2,251 +2,251 @@
 date: 2026-03-21
 type: task-worklog
 task: claudeagentsdk-x9j
-title: "Push to Notion & Trello"
+title: "Đẩy kết quả lên Notion & Trello"
 status: open
 detailed_at: 2026-03-21
 detail_score: ready-for-dev
 tags: [notion, trello, publishing, mcp, phase-3]
 ---
 
-# Push to Notion & Trello — Detailed Design
+# Đẩy lên Notion & Trello — Thiết kế chi tiết
 
-## 1. Objective
+## 1. Mục tiêu
 
-Push all research results to Notion (under Experiments section) and create Trello tracking cards for project phases, with mandatory pre-checks for MCP availability and graceful fallback to local-only documentation if external platforms are unreachable.
+Đẩy toàn bộ kết quả nghiên cứu lên Notion (dưới mục Experiments) và tạo Trello tracking cards cho các giai đoạn dự án, với kiểm tra tiên quyết bắt buộc về khả dụng MCP và fallback nhẹ nhàng sang chỉ-lưu-local nếu nền tảng bên ngoài không truy cập được.
 
-## 2. Scope
+## 2. Phạm vi
 
-**In-scope:**
-- Pre-check MCP availability for both Notion and Trello before any work
-- Create Notion page with executive summary, diagrams (as code blocks), use cases, and Feynman learning
-- Create Trello cards for Phase 1, Phase 2, and Phase 3 tracking
-- Verification that content is accessible after push
-- Graceful fallback to "local only" with documented reasons if MCP unavailable
+**Trong phạm vi:**
+- Kiểm tra tiên quyết khả dụng MCP cho cả Notion và Trello trước khi làm bất cứ gì
+- Tạo trang Notion với tóm tắt tổng quan, sơ đồ (dạng code blocks), use cases, và Feynman learning
+- Tạo Trello cards cho Phase 1, Phase 2, và Phase 3 tracking
+- Xác minh nội dung truy cập được sau khi đẩy
+- Fallback nhẹ nhàng sang "chỉ local" với lý do ghi rõ nếu MCP không khả dụng
 
-**Out-of-scope:**
-- Formatting Notion pages with advanced blocks (databases, toggles, etc.) — plain content is sufficient
-- Creating Trello boards or workspaces (use existing ones)
-- Automating future sync between local files and Notion/Trello
-- Pushing raw source code or large binary files
-- Setting up MCP servers if they aren't configured
+**Ngoài phạm vi:**
+- Format trang Notion với blocks nâng cao (databases, toggles, v.v.) — nội dung thuần đủ
+- Tạo Trello boards hoặc workspaces (dùng cái hiện có)
+- Tự động đồng bộ giữa files local và Notion/Trello trong tương lai
+- Đẩy mã nguồn thô hoặc file binary lớn
+- Thiết lập MCP servers nếu chưa cấu hình
 
-## 3. Input / Output
+## 3. Đầu vào / Đầu ra
 
-**Input:**
-- `self-explores/context/claude-agent-sdk-overview.md` (executive summary)
-- `self-explores/context/claude-agent-sdk-cheatsheet.md` (quick reference)
-- `self-explores/tasks/claudeagentsdk-554-diagrams.md` (sequence diagrams)
-- `self-explores/tasks/claudeagentsdk-7mq-usecase.md` (use case diagram)
+**Đầu vào:**
+- `self-explores/context/claude-agent-sdk-overview.md` (tóm tắt tổng quan)
+- `self-explores/context/claude-agent-sdk-cheatsheet.md` (tham chiếu nhanh)
+- `self-explores/tasks/claudeagentsdk-554-diagrams.md` (sơ đồ tuần tự)
+- `self-explores/tasks/claudeagentsdk-7mq-usecase.md` (sơ đồ use case)
 - `self-explores/learnings/2026-03-21-claude-agent-sdk-feynman.md` (Feynman learning)
 
-**Output:**
-- Notion page URL (under Experiments > claude-agent-sdk-python) — or "local only" note
-- Trello card URLs (3 cards on Tracking list) — or "local only" note
-- `self-explores/tasks/claudeagentsdk-x9j-report.md` — local confirmation report with links or fallback status
+**Đầu ra:**
+- URL trang Notion (dưới Experiments > claude-agent-sdk-python) — hoặc ghi chú "chỉ local"
+- URL Trello cards (3 cards trên list Tracking) — hoặc ghi chú "chỉ local"
+- `self-explores/tasks/claudeagentsdk-x9j-report.md` — báo cáo xác nhận local với links hoặc trạng thái fallback
 
-## 4. Dependencies
+## 4. Phụ thuộc (Dependencies)
 
-- `claudeagentsdk-aca` (executive summary + cheatsheet) — content dependency
-- `claudeagentsdk-1ig` (Feynman learning) — content dependency
-- Tool dependencies: `mcp__notion__*` MCP tools, `mcp__trello__*` MCP tools
-- Environment dependencies: MCP servers configured and accessible
+- `claudeagentsdk-aca` (tóm tắt tổng quan + cheatsheet) — phụ thuộc nội dung
+- `claudeagentsdk-1ig` (Feynman learning) — phụ thuộc nội dung
+- Phụ thuộc công cụ: `mcp__notion__*` MCP tools, `mcp__trello__*` MCP tools
+- Phụ thuộc môi trường: MCP servers đã cấu hình và truy cập được
 
-## 5. Flow
+## 5. Luồng xử lý (Flow)
 
-### Step 0: MANDATORY Pre-Check MCP Availability (~3 min)
+### Bước 0: KIỂM TRA TIÊN QUYẾT BẮT BUỘC — Khả dụng MCP (~3 phút)
 
-This step MUST be completed before any content creation or push attempts. Do not skip.
+Bước này PHẢI hoàn thành trước khi tạo nội dung hoặc đẩy. Không được bỏ qua.
 
-**Check Notion MCP:**
-1. Call `mcp__notion__notion-search` with query "Experiments"
-2. If success: Note the page ID of the Experiments section for later use
-3. If failure (connection error, auth error, timeout): Set `notion_available = false`, record error message
+**Kiểm tra Notion MCP:**
+1. Gọi `mcp__notion__notion-search` với truy vấn "Experiments"
+2. Nếu thành công: Ghi nhận page ID của mục Experiments để dùng sau
+3. Nếu thất bại (lỗi kết nối, lỗi xác thực, timeout): Đặt `notion_available = false`, ghi lại thông báo lỗi
 
-**Check Trello MCP:**
-1. Call `mcp__trello__get_lists` (or `mcp__trello__list_boards` first if no active board)
-2. If success: Note the list ID of "Tracking" (or equivalent list) for later use
-3. If failure: Set `trello_available = false`, record error message
+**Kiểm tra Trello MCP:**
+1. Gọi `mcp__trello__get_lists` (hoặc `mcp__trello__list_boards` trước nếu chưa có active board)
+2. Nếu thành công: Ghi nhận list ID của "Tracking" (hoặc list tương đương) để dùng sau
+3. Nếu thất bại: Đặt `trello_available = false`, ghi lại thông báo lỗi
 
-**Decision matrix:**
-| Notion | Trello | Action |
+**Ma trận quyết định:**
+| Notion | Trello | Hành động |
 |--------|--------|--------|
-| OK | OK | Proceed with both platforms |
-| OK | FAIL | Push to Notion only, note Trello unavailable |
-| FAIL | OK | Push to Trello only, note Notion unavailable |
-| FAIL | FAIL | Skip to Step 4 (fallback), document "local only" |
+| OK | OK | Tiếp tục với cả hai nền tảng |
+| OK | LỖI | Chỉ đẩy Notion, ghi nhận Trello không khả dụng |
+| LỖI | OK | Chỉ đẩy Trello, ghi nhận Notion không khả dụng |
+| LỖI | LỖI | Nhảy đến Bước 4 (fallback), ghi "chỉ local" |
 
-**Verify:** Both MCP checks completed. Decision recorded. No work started on unavailable platforms.
+**Kiểm tra:** Cả hai kiểm tra MCP hoàn tất. Quyết định đã ghi nhận. Không bắt đầu công việc trên nền tảng không khả dụng.
 
-### Step 1: Create Notion Page (~5 min)
+### Bước 1: Tạo trang Notion (~5 phút)
 
-*Skip this step if `notion_available = false`.*
+*Bỏ qua bước này nếu `notion_available = false`.*
 
-1. Find or navigate to the Experiments parent page (using page ID from Step 0)
-2. Create a new page titled "claude-agent-sdk-python Research" under Experiments
-3. Structure the page content:
+1. Tìm hoặc điều hướng đến trang cha Experiments (dùng page ID từ Bước 0)
+2. Tạo trang mới tiêu đề "Nghiên cứu claude-agent-sdk-python" dưới Experiments
+3. Cấu trúc nội dung trang:
 
 ```
-# claude-agent-sdk-python Research
-Date: 2026-03-21
-Status: Complete (Phase 1-3)
+# Nghiên cứu claude-agent-sdk-python
+Ngày: 2026-03-21
+Trạng thái: Hoàn thành (Phase 1-3)
 
-## Executive Summary
-(Paste content from claude-agent-sdk-overview.md)
+## Tóm tắt tổng quan
+(Dán nội dung từ claude-agent-sdk-overview.md)
 
-## Architecture Diagrams
-(Paste Mermaid diagrams as code blocks — Notion won't render Mermaid natively)
+## Sơ đồ kiến trúc
+(Dán Mermaid diagrams dạng code blocks — Notion không render Mermaid native)
 
-### Sequence Diagram: query() Flow
-(paste diagram 1 as code block)
+### Sơ đồ tuần tự: Luồng query()
+(dán diagram 1 dạng code block)
 
-### Sequence Diagram: ClaudeSDKClient Flow
-(paste diagram 2 as code block)
+### Sơ đồ tuần tự: Luồng ClaudeSDKClient
+(dán diagram 2 dạng code block)
 
-(... repeat for all 4 sequence diagrams)
+(... lặp cho cả 4 sơ đồ tuần tự)
 
-### Use Case Diagram
-(paste use case diagram as code block)
+### Sơ đồ Use Case
+(dán use case diagram dạng code block)
 
-## Use Case Guide
-(Paste key sections from use-case-guide.md)
+## Hướng dẫn Use Case
+(Dán phần chính từ use-case-guide.md)
 
-## Feynman Learning Notes
-(Paste content from feynman.md)
+## Ghi chú Feynman Learning
+(Dán nội dung từ feynman.md)
 
-## Quick Reference
-(Paste cheatsheet content or link to it)
+## Tham chiếu nhanh
+(Dán nội dung cheatsheet hoặc link đến nó)
 ```
 
-4. If content is too large for a single page (Notion API limit), split into sub-pages:
-   - Main page: Executive Summary + links to sub-pages
-   - Sub-page 1: Architecture Diagrams
-   - Sub-page 2: Use Cases + Feynman Learning
-   - Sub-page 3: Cheatsheet
+4. Nếu nội dung quá lớn cho một trang (giới hạn API Notion), chia thành trang con:
+   - Trang chính: Tóm tắt tổng quan + links đến trang con
+   - Trang con 1: Sơ đồ kiến trúc
+   - Trang con 2: Use Cases + Feynman Learning
+   - Trang con 3: Cheatsheet
 
-**Verify:** Notion page created and accessible. Content matches source files. Page appears under Experiments section.
+**Kiểm tra:** Trang Notion đã tạo và truy cập được. Nội dung khớp file nguồn. Trang xuất hiện dưới mục Experiments.
 
-### Step 2: Create Trello Cards (~5 min)
+### Bước 2: Tạo Trello Cards (~5 phút)
 
-*Skip this step if `trello_available = false`.*
+*Bỏ qua bước này nếu `trello_available = false`.*
 
-1. Ensure active board is set (call `mcp__trello__set_active_board` if needed)
-2. Find the "Tracking" list (or create one if it doesn't exist using `mcp__trello__add_list_to_board`)
-3. Create 3 cards:
+1. Đảm bảo active board đã đặt (gọi `mcp__trello__set_active_board` nếu cần)
+2. Tìm list "Tracking" (hoặc tạo nếu chưa có bằng `mcp__trello__add_list_to_board`)
+3. Tạo 3 cards:
 
-**Card 1: "claude-agent-sdk: Phase 1 - Foundation"**
-- Description: "Read official docs, analyze code architecture, setup learning resources"
+**Card 1: "claude-agent-sdk: Phase 1 - Nền tảng"**
+- Mô tả: "Đọc docs chính thức, phân tích kiến trúc code, thiết lập tài nguyên học tập"
 - Checklist items:
-  - Task 2e7: Doc thu vien official docs
-  - Task d0g: Doc code + ve architecture
-  - Task 3ma: Tim learning resources
+  - Task 2e7: Đọc thư viện tài liệu chính thức
+  - Task d0g: Đọc code + vẽ kiến trúc
+  - Task 3ma: Tìm tài nguyên học tập
 
-**Card 2: "claude-agent-sdk: Phase 2 - Deep Dive"**
-- Description: "Use case analysis, sequence diagrams, use case diagram"
+**Card 2: "claude-agent-sdk: Phase 2 - Đào sâu"**
+- Mô tả: "Phân tích use case, sơ đồ tuần tự, sơ đồ use case"
 - Checklist items:
-  - Task qw0: Phan tich use cases
-  - Task fl0: Curate learning resources
-  - Task 554: Ve Sequence Diagrams
-  - Task 7mq: Ve Use Case Diagram
+  - Task qw0: Phân tích use cases
+  - Task fl0: Chọn lọc tài nguyên học tập
+  - Task 554: Vẽ Sequence Diagrams
+  - Task 7mq: Vẽ Use Case Diagram
 
-**Card 3: "claude-agent-sdk: Phase 3 - Synthesis"**
-- Description: "Executive summary, Feynman learning, publish results"
+**Card 3: "claude-agent-sdk: Phase 3 - Tổng hợp"**
+- Mô tả: "Tóm tắt tổng quan, Feynman learning, xuất bản kết quả"
 - Checklist items:
-  - Task aca: Tong hop (summary + cheatsheet)
+  - Task aca: Tổng hợp (summary + cheatsheet)
   - Task 1ig: Feynman learning
-  - Task x9j: Push to Notion & Trello
+  - Task x9j: Đẩy lên Notion & Trello
 
-4. Add labels if available (e.g., "Research", "claude-agent-sdk")
+4. Thêm labels nếu có (VD: "Nghiên cứu", "claude-agent-sdk")
 
-**Verify:** 3 cards created on Tracking list. Each card has description and checklist. Cards are visible on the board.
+**Kiểm tra:** 3 cards đã tạo trên list Tracking. Mỗi card có mô tả và checklist. Cards hiện trên board.
 
-### Step 3: Verify and Report (~5 min)
+### Bước 3: Xác minh và báo cáo (~5 phút)
 
-1. **Notion verification:**
-   - Call `mcp__notion__notion-search` for "claude-agent-sdk-python Research"
-   - Confirm page exists and has content
-   - Record the page URL
+1. **Xác minh Notion:**
+   - Gọi `mcp__notion__notion-search` tìm "Nghiên cứu claude-agent-sdk-python"
+   - Xác nhận trang tồn tại và có nội dung
+   - Ghi nhận URL trang
 
-2. **Trello verification:**
-   - Call `mcp__trello__get_cards_by_list_id` for the Tracking list
-   - Confirm 3 cards exist with correct titles
-   - Record card URLs
+2. **Xác minh Trello:**
+   - Gọi `mcp__trello__get_cards_by_list_id` cho list Tracking
+   - Xác nhận 3 cards tồn tại với tiêu đề đúng
+   - Ghi nhận URLs các cards
 
-3. **Write local report** (`claudeagentsdk-x9j-report.md`):
+3. **Viết báo cáo local** (`claudeagentsdk-x9j-report.md`):
 
 ```markdown
-# Push Report — claude-agent-sdk Research
+# Báo cáo đẩy — Nghiên cứu claude-agent-sdk
 
-## Date: 2026-03-21
+## Ngày: 2026-03-21
 
 ## Notion
-- Status: {SUCCESS | FAILED | SKIPPED}
-- Page URL: {url or "N/A"}
-- Content: Executive summary, 5 diagrams, use cases, Feynman learning
-- Notes: {any issues}
+- Trạng thái: {THÀNH CÔNG | THẤT BẠI | BỎ QUA}
+- URL trang: {url hoặc "N/A"}
+- Nội dung: Tóm tắt tổng quan, 5 sơ đồ, use cases, Feynman learning
+- Ghi chú: {các vấn đề nếu có}
 
 ## Trello
-- Status: {SUCCESS | FAILED | SKIPPED}
+- Trạng thái: {THÀNH CÔNG | THẤT BẠI | BỎ QUA}
 - Cards:
-  - Phase 1: {url or "N/A"}
-  - Phase 2: {url or "N/A"}
-  - Phase 3: {url or "N/A"}
-- Notes: {any issues}
+  - Phase 1: {url hoặc "N/A"}
+  - Phase 2: {url hoặc "N/A"}
+  - Phase 3: {url hoặc "N/A"}
+- Ghi chú: {các vấn đề nếu có}
 
-## Summary
-- Platforms published to: {count}/2
-- Local files remain the source of truth at: self-explores/
+## Tổng kết
+- Nền tảng đã đẩy: {số}/2
+- File local vẫn là nguồn chính xác tại: self-explores/
 ```
 
-**Verify:** Report file exists. All URLs are valid (if platforms were available). Report accurately reflects what was pushed.
+**Kiểm tra:** File báo cáo tồn tại. Tất cả URLs hợp lệ (nếu nền tảng khả dụng). Báo cáo phản ánh chính xác những gì đã đẩy.
 
-### Step 4: Fallback — Local Only (~2 min)
+### Bước 4: Fallback — Chỉ Local (~2 phút)
 
-*Execute this step ONLY if both Notion and Trello are unavailable.*
+*Thực hiện bước này CHỈ KHI cả Notion và Trello đều không khả dụng.*
 
-1. Write the report file with status "LOCAL ONLY" for both platforms
-2. Include the specific error messages from Step 0
-3. Add a note: "All research content is available locally under self-explores/. To push later, re-run task x9j when MCP servers are configured."
-4. Optionally: create a simple HTML index file that links all local content for easy browsing
+1. Viết file báo cáo với trạng thái "CHỈ LOCAL" cho cả hai nền tảng
+2. Bao gồm thông báo lỗi cụ thể từ Bước 0
+3. Thêm ghi chú: "Tất cả nội dung nghiên cứu có sẵn tại local dưới self-explores/. Để đẩy sau, chạy lại task x9j khi MCP servers đã cấu hình."
+4. Tuỳ chọn: tạo file HTML index đơn giản link tất cả nội dung local để duyệt dễ dàng
 
-**Verify:** Report clearly states "local only" with reasons. Local content files are all accessible.
+**Kiểm tra:** Báo cáo ghi rõ "chỉ local" với lý do. File nội dung local đều truy cập được.
 
-## 6. Edge Cases & Error Handling
+## 6. Trường hợp biên & Xử lý lỗi
 
-| Case | Trigger | Expected | Recovery |
+| Trường hợp | Điều kiện kích hoạt | Hành vi mong đợi | Cách khôi phục |
 |------|---------|----------|----------|
-| Notion MCP not configured | MCP server not in environment | `mcp__notion__notion-search` fails | Set `notion_available = false`, skip Notion steps, note in report |
-| Trello no active board | No board set or user has no boards | `mcp__trello__get_lists` fails | Try `mcp__trello__list_boards` first; if no boards, set `trello_available = false` |
-| Notion "Experiments" page doesn't exist | Parent page not found in search | Cannot create sub-page under Experiments | Search for closest parent (e.g., root workspace); create page there; note location in report |
-| Mermaid diagrams don't render in Notion | Notion doesn't support Mermaid rendering | Diagrams appear as plain text code blocks | This is expected — paste as fenced code blocks with `mermaid` language tag for future reference |
-| Content too large for single Notion page | API payload size limit exceeded | Page creation fails | Split into multiple linked sub-pages (main + 3 sub-pages as described in Step 1) |
-| Trello list "Tracking" doesn't exist | List not on active board | Cannot add cards | Create the list using `mcp__trello__add_list_to_board`, then add cards |
-| MCP auth token expired | Token expired between pre-check and actual push | Push fails mid-way | Catch error, record what was successfully pushed, note partial failure in report |
-| Both MCPs available but one fails mid-push | Transient error during content creation | Partial push | Complete the working platform, record partial failure for the other, report both statuses |
+| Notion MCP chưa cấu hình | MCP server không trong môi trường | `mcp__notion__notion-search` thất bại | Đặt `notion_available = false`, bỏ qua bước Notion, ghi trong báo cáo |
+| Trello chưa có active board | Chưa đặt board hoặc user không có boards | `mcp__trello__get_lists` thất bại | Thử `mcp__trello__list_boards` trước; nếu không có boards, đặt `trello_available = false` |
+| Trang Notion "Experiments" không tồn tại | Trang cha không tìm thấy khi search | Không tạo được trang con dưới Experiments | Tìm trang cha gần nhất (VD: root workspace); tạo trang ở đó; ghi vị trí trong báo cáo |
+| Mermaid diagrams không render trong Notion | Notion không hỗ trợ Mermaid rendering | Diagrams hiện dạng text code block thuần | Đây là dự kiến — dán dạng fenced code blocks với tag ngôn ngữ `mermaid` để tham khảo sau |
+| Nội dung quá lớn cho một trang Notion | Vượt giới hạn API payload | Tạo trang thất bại | Chia thành nhiều trang con liên kết (trang chính + 3 trang con như mô tả trong Bước 1) |
+| Trello list "Tracking" không tồn tại | List không có trên active board | Không thêm được cards | Tạo list bằng `mcp__trello__add_list_to_board`, sau đó thêm cards |
+| Token xác thực MCP hết hạn | Token hết hạn giữa kiểm tra tiên quyết và đẩy thực tế | Đẩy thất bại giữa chừng | Bắt lỗi, ghi nhận những gì đã đẩy thành công, ghi thất bại một phần trong báo cáo |
+| Cả hai MCP khả dụng nhưng một lỗi giữa chừng | Lỗi thoáng qua khi tạo nội dung | Đẩy một phần | Hoàn thành nền tảng hoạt động, ghi thất bại một phần cho nền tảng kia, báo cáo cả hai trạng thái |
 
-## 7. Acceptance Criteria
+## 7. Tiêu chí chấp nhận (Acceptance Criteria)
 
-- **Happy 1:** Given both Notion and Trello MCPs are available, When push is executed, Then at least 1 platform has the research content with working links reported in the local report file
-- **Happy 2:** Given successful push to Notion, Then the Notion page contains: executive summary, at least 2 diagrams as code blocks, use case content, and Feynman learning content — all under the Experiments section
-- **Negative:** Given both Notion and Trello MCPs fail, When fallback is triggered, Then the local report documents "local only — MCP unavailable" with specific error messages for each platform, and all local content files remain intact and accessible
+- **Thành công 1:** Khi cả Notion và Trello MCP đều khả dụng, Khi thực hiện đẩy, Thì ít nhất 1 nền tảng có nội dung nghiên cứu với links hoạt động được báo cáo trong file báo cáo local
+- **Thành công 2:** Khi đẩy Notion thành công, Thì trang Notion chứa: tóm tắt tổng quan, ít nhất 2 sơ đồ dạng code blocks, nội dung use case, và nội dung Feynman learning — tất cả dưới mục Experiments
+- **Thất bại:** Khi cả Notion và Trello MCP đều thất bại, Khi fallback được kích hoạt, Thì báo cáo local ghi "chỉ local — MCP không khả dụng" với thông báo lỗi cụ thể cho mỗi nền tảng, và tất cả file nội dung local vẫn nguyên vẹn và truy cập được
 
-## 8. Technical Notes
+## 8. Ghi chú kỹ thuật
 
-- Notion MCP tools used: `mcp__notion__notion-search` (find pages), `mcp__notion__notion-create-pages` (create page with content), `mcp__notion__notion-fetch` (verify page)
-- Trello MCP tools used: `mcp__trello__list_boards`, `mcp__trello__set_active_board`, `mcp__trello__get_lists`, `mcp__trello__add_list_to_board`, `mcp__trello__add_card_to_list`, `mcp__trello__create_checklist`, `mcp__trello__add_checklist_item`, `mcp__trello__get_cards_by_list_id`
-- Notion does NOT render Mermaid diagrams natively — they will appear as code blocks. This is acceptable; readers can paste into a Mermaid renderer
-- Notion page content format: use Markdown-like syntax in the content parameter (Notion API converts to blocks)
-- Trello card descriptions support Markdown
-- MCP timeout: allow up to 30 seconds per MCP call; if slower, treat as failure
-- Local report file serves as the audit trail regardless of push success/failure
+- Notion MCP tools dùng: `mcp__notion__notion-search` (tìm trang), `mcp__notion__notion-create-pages` (tạo trang với nội dung), `mcp__notion__notion-fetch` (xác minh trang)
+- Trello MCP tools dùng: `mcp__trello__list_boards`, `mcp__trello__set_active_board`, `mcp__trello__get_lists`, `mcp__trello__add_list_to_board`, `mcp__trello__add_card_to_list`, `mcp__trello__create_checklist`, `mcp__trello__add_checklist_item`, `mcp__trello__get_cards_by_list_id`
+- Notion KHÔNG render Mermaid diagrams native — chúng sẽ hiện dạng code blocks. Đây là chấp nhận được; người đọc có thể dán vào Mermaid renderer
+- Format nội dung trang Notion: dùng cú pháp giống Markdown trong tham số content (Notion API chuyển thành blocks)
+- Trello card descriptions hỗ trợ Markdown
+- Timeout MCP: cho phép tối đa 30 giây mỗi lần gọi MCP; nếu chậm hơn, coi như thất bại
+- File báo cáo local đóng vai trò audit trail bất kể đẩy thành công hay thất bại
 
-## 9. Risks
+## 9. Rủi ro
 
-- **Risk:** MCP servers may not be configured in the current environment, making this entire task a no-op. **Mitigation:** Step 0 pre-check is mandatory and fast (< 3 min). If both fail, the task completes quickly with a "local only" report — no time wasted.
-- **Risk:** Notion content may lose formatting when converted from Markdown. **Mitigation:** Keep formatting simple (headings, bullet lists, code blocks). Avoid tables or complex Markdown that Notion may not parse correctly.
-- **Risk:** Trello board structure may not match expectations (no "Tracking" list, different board organization). **Mitigation:** List the boards first, pick the most appropriate one, create a "Tracking" list if needed.
-- **Risk:** Content pushed to Notion/Trello becomes stale as local files are updated. **Mitigation:** Note in the Notion page header: "Source of truth: local files at self-explores/. Last pushed: 2026-03-21." This is a one-time push, not a sync mechanism.
+- **Rủi ro:** MCP servers có thể chưa cấu hình trong môi trường hiện tại, khiến toàn bộ task thành no-op. **Giảm thiểu:** Kiểm tra tiên quyết Bước 0 là bắt buộc và nhanh (< 3 phút). Nếu cả hai thất bại, task hoàn thành nhanh với báo cáo "chỉ local" — không lãng phí thời gian.
+- **Rủi ro:** Nội dung Notion có thể mất format khi chuyển từ Markdown. **Giảm thiểu:** Giữ format đơn giản (headings, danh sách, code blocks). Tránh tables hoặc Markdown phức tạp mà Notion có thể không parse đúng.
+- **Rủi ro:** Cấu trúc Trello board có thể không khớp dự kiến (không có list "Tracking", tổ chức board khác). **Giảm thiểu:** Liệt kê boards trước, chọn board phù hợp nhất, tạo list "Tracking" nếu cần.
+- **Rủi ro:** Nội dung đẩy lên Notion/Trello trở nên lỗi thời khi files local cập nhật. **Giảm thiểu:** Ghi trong header trang Notion: "Nguồn chính xác: files local tại self-explores/. Lần đẩy cuối: 2026-03-21." Đây là đẩy một lần, không phải cơ chế đồng bộ.
 
-## Worklog
+## Nhật ký công việc (Worklog)
 
-*(Chua bat dau)*
+*(Chưa bắt đầu)*

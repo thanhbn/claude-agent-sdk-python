@@ -2,241 +2,241 @@
 date: 2026-03-21
 type: task-worklog
 task: claudeagentsdk-554
-title: "Ve Sequence Diagrams"
-status: in_progress
+title: "Vẽ Sequence Diagrams"
+status: completed
 started_at: 2026-03-22 10:00
 detailed_at: 2026-03-21
 detail_score: ready-for-dev
 tags: [diagram, sequence, mermaid, architecture, phase-2]
 ---
 
-# Ve Sequence Diagrams — Detailed Design
+# Vẽ Sequence Diagrams — Thiết kế chi tiết
 
-## 1. Objective
+## 1. Mục tiêu
 
-Create 4 Mermaid sequence diagrams that accurately depict the runtime data flow for the SDK's four core interaction patterns: query() one-shot, ClaudeSDKClient interactive session, hook callback dispatch, and MCP in-process tool call.
+Tạo 4 sơ đồ tuần tự (sequence diagram) Mermaid mô tả chính xác luồng dữ liệu runtime cho 4 mẫu tương tác cốt lõi của SDK: query() một lần, ClaudeSDKClient phiên tương tác, dispatch hook callback, và gọi MCP tool in-process.
 
-## 2. Scope
+## 2. Phạm vi
 
-**In-scope:**
-- Sequence diagram for `query()` one-shot flow (create transport, initialize, stream, teardown)
-- Sequence diagram for `ClaudeSDKClient` interactive session (connect, multi-turn, interrupt, disconnect)
-- Sequence diagram for hook callback dispatch (CLI request, matcher routing, Python handler, response)
-- Sequence diagram for MCP in-process tool call (CLI tool request, Query intercept, SDK MCP server, handler execution)
-- Mermaid syntax validated for GitHub rendering
-- Participant names matching actual class names in source code
+**Trong phạm vi:**
+- Sơ đồ tuần tự cho luồng `query()` một lần (tạo transport, initialize, stream, teardown)
+- Sơ đồ tuần tự cho phiên tương tác `ClaudeSDKClient` (kết nối, đa lượt, ngắt, ngắt kết nối)
+- Sơ đồ tuần tự cho dispatch hook callback (CLI request, matcher routing, Python handler, response)
+- Sơ đồ tuần tự cho gọi MCP tool in-process (CLI tool request, Query chặn, SDK MCP server, thực thi handler)
+- Cú pháp Mermaid hợp lệ để render trên GitHub
+- Tên participant khớp với tên class thực trong mã nguồn
 
-**Out-of-scope:**
-- Class diagrams or component diagrams (separate tasks)
-- External MCP server communication (subprocess IPC, not in-process)
-- Agent orchestration flows (too complex for single sequence diagram)
-- Error/retry flows (note in diagram as alt blocks only)
-- Interactive diagram tooling (Mermaid text only)
+**Ngoài phạm vi:**
+- Sơ đồ lớp (class diagram) hoặc sơ đồ thành phần (component diagram) (task riêng)
+- Giao tiếp MCP server bên ngoài (subprocess IPC, không phải in-process)
+- Luồng điều phối agent (quá phức tạp cho một sơ đồ tuần tự)
+- Luồng lỗi/retry (chỉ ghi chú trong diagram dạng alt block)
+- Công cụ diagram tương tác (chỉ text Mermaid)
 
-## 3. Input / Output
+## 3. Đầu vào / Đầu ra
 
-**Input:**
-- `self-explores/context/code-architecture.md` (from task d0g)
-- Source code files for verification:
-  - `src/claude_agent_sdk/query.py` (query entry point)
+**Đầu vào:**
+- `self-explores/context/code-architecture.md` (từ task d0g)
+- File mã nguồn để xác minh:
+  - `src/claude_agent_sdk/query.py` (điểm vào query)
   - `src/claude_agent_sdk/client.py` (ClaudeSDKClient)
-  - `src/claude_agent_sdk/_internal/query.py` (Query control protocol handler)
+  - `src/claude_agent_sdk/_internal/query.py` (Query xử lý giao thức điều khiển)
   - `src/claude_agent_sdk/_internal/transport/subprocess_cli.py` (SubprocessCLITransport)
-  - `src/claude_agent_sdk/_internal/message_parser.py` (message parsing)
+  - `src/claude_agent_sdk/_internal/message_parser.py` (phân tích message)
 
-**Output:**
-- `self-explores/tasks/claudeagentsdk-554-diagrams.md` — single file containing all 4 Mermaid sequence diagrams with explanatory text between each
+**Đầu ra:**
+- `self-explores/tasks/claudeagentsdk-554-diagrams.md` — file duy nhất chứa tất cả 4 sơ đồ tuần tự Mermaid kèm text giải thích giữa mỗi sơ đồ
 
-## 4. Dependencies
+## 4. Phụ thuộc (Dependencies)
 
-- `claudeagentsdk-d0g` (code architecture analysis) — MUST be completed first; provides the architectural understanding needed for accurate diagrams
-- Tool dependencies: Mermaid syntax knowledge, GitHub Markdown renderer for validation
+- `claudeagentsdk-d0g` (phân tích kiến trúc code) — PHẢI hoàn thành trước; cung cấp hiểu biết kiến trúc cần thiết cho diagram chính xác
+- Phụ thuộc công cụ: Kiến thức cú pháp Mermaid, GitHub Markdown renderer để xác minh
 
-## 5. Flow
+## 5. Luồng xử lý (Flow)
 
-### Step 1: Sequence Diagram 1 — query() One-Shot Flow (~10 min)
+### Bước 1: Sequence Diagram 1 — Luồng query() Một lần (~10 phút)
 
-Draw the complete lifecycle of a `query()` call from user invocation to final message yield.
+Vẽ toàn bộ vòng đời của một lệnh gọi `query()` từ khi user gọi đến khi yield message cuối cùng.
 
-**Participants (left to right):**
-- `UserApp` — caller code
-- `query()` — public API function in `query.py`
-- `InternalClient` — `_internal/client.py`, orchestrates the query lifecycle
-- `Query` — `_internal/query.py`, control protocol handler
-- `Transport` — `SubprocessCLITransport`, manages CLI subprocess
-- `CLI` — Claude Code CLI subprocess
+**Participants (trái sang phải):**
+- `UserApp` — code gọi
+- `query()` — hàm API công khai trong `query.py`
+- `InternalClient` — `_internal/client.py`, điều phối vòng đời query
+- `Query` — `_internal/query.py`, xử lý giao thức điều khiển
+- `Transport` — `SubprocessCLITransport`, quản lý subprocess CLI
+- `CLI` — subprocess Claude Code CLI
 
-**Interactions:**
-1. UserApp calls `query(prompt, options)`
-2. query() creates `InternalClient`
-3. InternalClient creates `SubprocessCLITransport`
-4. Transport starts CLI subprocess with `--input-format stream-json`
-5. Transport sends initialize request via stdin
-6. CLI responds with initialize result via stdout
-7. Query sends user prompt as control request
-8. CLI streams JSON messages (assistant text, tool use, etc.)
-9. Transport reads stdout line-by-line, parses JSON
-10. `MessageParser` converts raw dicts to typed `Message` objects
-11. Messages yielded to UserApp via `AsyncIterator[Message]`
-12. On stream end, Transport kills subprocess
-13. InternalClient tears down all resources
+**Tương tác:**
+1. UserApp gọi `query(prompt, options)`
+2. query() tạo `InternalClient`
+3. InternalClient tạo `SubprocessCLITransport`
+4. Transport khởi động subprocess CLI với `--input-format stream-json`
+5. Transport gửi initialize request qua stdin
+6. CLI phản hồi với initialize result qua stdout
+7. Query gửi user prompt dạng control request
+8. CLI stream JSON messages (assistant text, tool use, v.v.)
+9. Transport đọc stdout từng dòng, phân tích JSON
+10. `MessageParser` chuyển đổi raw dict thành đối tượng `Message` có kiểu
+11. Messages được yield cho UserApp qua `AsyncIterator[Message]`
+12. Khi stream kết thúc, Transport kill subprocess
+13. InternalClient dọn dẹp tất cả tài nguyên
 
-Use `activate`/`deactivate` to show lifetimes. Add `note` for "JSON streaming over stdin/stdout".
+Dùng `activate`/`deactivate` để hiện thời gian sống. Thêm `note` cho "JSON streaming qua stdin/stdout".
 
-**Verify:** Render Mermaid in a Markdown previewer or paste into github.com Mermaid live editor. All participants should appear, arrows should be sequential, no syntax errors.
+**Kiểm tra:** Render Mermaid trong previewer Markdown hoặc paste vào Mermaid live editor. Tất cả participants phải xuất hiện, mũi tên tuần tự, không lỗi cú pháp.
 
-### Step 2: Sequence Diagram 2 — ClaudeSDKClient Interactive Session (~10 min)
+### Bước 2: Sequence Diagram 2 — Phiên tương tác ClaudeSDKClient (~10 phút)
 
-Draw a multi-turn conversation session showing the bidirectional nature.
+Vẽ một phiên hội thoại đa lượt thể hiện tính chất hai chiều.
 
 **Participants:**
 - `UserApp`
-- `ClaudeSDKClient` — public API in `client.py`
+- `ClaudeSDKClient` — API công khai trong `client.py`
 - `Transport` — `SubprocessCLITransport`
 - `Query` — `_internal/query.py`
 - `CLI` — Claude Code CLI
 
-**Interactions:**
-1. UserApp enters `async with ClaudeSDKClient(options) as client:`
-2. Client creates Transport, starts subprocess
-3. Client sends initialize request
-4. CLI returns initialize result (capabilities, session info)
-5. UserApp calls `client.query("first prompt")`
-6. Query sends prompt to CLI, CLI processes, streams response
-7. UserApp receives response via `receive_response()`
-8. UserApp calls `client.query("follow-up")` (multi-turn)
-9. CLI continues conversation with context
-10. UserApp calls `client.interrupt()` mid-stream
-11. Query sends interrupt control request
-12. CLI acknowledges interrupt, stops generation
-13. `async with` block exits, Client disconnects, Transport kills subprocess
+**Tương tác:**
+1. UserApp vào `async with ClaudeSDKClient(options) as client:`
+2. Client tạo Transport, khởi động subprocess
+3. Client gửi initialize request
+4. CLI trả initialize result (capabilities, session info)
+5. UserApp gọi `client.query("prompt đầu tiên")`
+6. Query gửi prompt cho CLI, CLI xử lý, stream phản hồi
+7. UserApp nhận phản hồi qua `receive_response()`
+8. UserApp gọi `client.query("câu hỏi tiếp nối")` (đa lượt)
+9. CLI tiếp tục hội thoại với ngữ cảnh
+10. UserApp gọi `client.interrupt()` giữa chừng
+11. Query gửi interrupt control request
+12. CLI xác nhận interrupt, dừng sinh (generation)
+13. Khối `async with` thoát, Client ngắt kết nối, Transport kill subprocess
 
-Use `opt` block for "Multi-turn follow-up" and `break` for interrupt flow.
+Dùng khối `opt` cho "Tiếp nối đa lượt" và `break` cho luồng interrupt.
 
-**Verify:** Check that the `async with` context manager entry/exit is clearly shown. Verify interrupt flow matches actual `client.py` implementation.
+**Kiểm tra:** Kiểm tra rằng entry/exit của async context manager hiện rõ ràng. Xác minh luồng interrupt khớp triển khai thực tế trong `client.py`.
 
-### Step 3: Sequence Diagram 3 — Hook Callback Dispatch (~15 min)
+### Bước 3: Sequence Diagram 3 — Dispatch Hook Callback (~15 phút)
 
-This is the most complex diagram. Show how the CLI initiates a hook callback and the SDK dispatches it to user-defined Python functions.
-
-**Participants:**
-- `CLI` — initiates the hook request
-- `Query` — `_internal/query.py`, receives and routes hook callbacks
-- `HookMatcher` — matching logic within Query
-- `UserHookFn` — user-provided async Python function
-
-**Interactions:**
-1. CLI encounters a hook point (e.g., PreToolUse for Bash)
-2. CLI sends hook callback request via stdout (JSON with `request_id`, hook type, tool info)
-3. Query receives the hook callback request from Transport
-4. Query identifies hook type (PreToolUse, PostToolUse, Stop, etc.)
-5. Query iterates registered HookMatchers for this hook type
-6. HookMatcher checks if tool name / pattern matches
-7. `alt` block: Match found vs. No match
-8. If match: Query calls UserHookFn with hook event data
-9. UserHookFn executes async logic (approve, reject, modify)
-10. UserHookFn returns decision (e.g., `{"decision": "approve"}` or `{"decision": "block", "reason": "..."}`)
-11. Query wraps decision in control response with matching `request_id`
-12. Query sends response back to CLI via stdin
-13. CLI processes decision: continues (approve) or blocks tool use (reject)
-
-Add `note` explaining: "Field names: async_ and continue_ in Python, converted to async/continue on wire". Add `alt` block for approve vs. block decisions.
-
-**Verify:** Cross-reference with `_internal/query.py` to confirm the hook dispatch mechanism. Verify that `request_id` matching is shown. Check that the async nature of the callback is clear.
-
-### Step 4: Sequence Diagram 4 — MCP In-Process Tool Call (~10 min)
-
-Show how SDK MCP servers handle tool calls entirely in-process without subprocess IPC.
+Đây là diagram phức tạp nhất. Hiện cách CLI khởi tạo hook callback và SDK dispatch nó đến hàm Python do user định nghĩa.
 
 **Participants:**
-- `CLI` — Claude decides to use a tool
-- `Query` — intercepts SDK MCP tool calls
-- `MCPServer` — in-process MCP server created via `create_sdk_mcp_server()`
-- `ToolHandler` — user-defined function decorated with `@tool`
+- `CLI` — khởi tạo hook request
+- `Query` — `_internal/query.py`, nhận và định tuyến hook callbacks
+- `HookMatcher` — logic khớp mẫu trong Query
+- `UserHookFn` — hàm async Python do user cung cấp
 
-**Interactions:**
-1. Claude (via CLI) decides to call a tool (e.g., `get_weather`)
-2. CLI sends tool call request via stdout (tool name, arguments, request_id)
-3. Query receives the tool call request
-4. Query checks: is this an SDK MCP server tool? (vs. external MCP)
-5. `alt` block: SDK MCP tool vs. External MCP
-6. If SDK MCP: Query routes to the matching MCPServer instance
-7. MCPServer looks up the tool by name in its registry
-8. MCPServer calls `call_tool()` which invokes the `@tool`-decorated ToolHandler
-9. ToolHandler executes (may be async), returns result
-10. MCPServer packages result as MCP tool response
-11. Query wraps result in control response with matching `request_id`
-12. Query sends response to CLI via stdin
-13. CLI receives tool result, continues generation
+**Tương tác:**
+1. CLI gặp điểm hook (VD: PreToolUse cho Bash)
+2. CLI gửi hook callback request qua stdout (JSON với `request_id`, loại hook, thông tin tool)
+3. Query nhận hook callback request từ Transport
+4. Query xác định loại hook (PreToolUse, PostToolUse, Stop, v.v.)
+5. Query duyệt các HookMatcher đã đăng ký cho loại hook này
+6. HookMatcher kiểm tra tên tool / pattern có khớp không
+7. Khối `alt`: Tìm thấy khớp vs. Không khớp
+8. Nếu khớp: Query gọi UserHookFn với dữ liệu sự kiện hook
+9. UserHookFn thực thi logic async (chấp nhận, từ chối, sửa đổi)
+10. UserHookFn trả quyết định (VD: `{"decision": "approve"}` hoặc `{"decision": "block", "reason": "..."}`)
+11. Query bọc quyết định trong control response với `request_id` khớp
+12. Query gửi response lại CLI qua stdin
+13. CLI xử lý quyết định: tiếp tục (approve) hoặc chặn tool use (reject)
 
-Add `note` explaining: "SDK MCP tools run in the Python process, not as separate subprocesses".
+Thêm `note` giải thích: "Tên trường: async_ và continue_ trong Python, chuyển thành async/continue trên wire". Thêm khối `alt` cho quyết định approve vs. block.
 
-**Verify:** Confirm the interception logic in `_internal/query.py`. Verify that `create_sdk_mcp_server()` and `@tool` decorator flow is accurate.
+**Kiểm tra:** Đối chiếu với `_internal/query.py` để xác nhận cơ chế dispatch hook. Xác minh rằng khớp `request_id` được hiển thị. Kiểm tra tính chất async của callback rõ ràng.
 
-### Step 5: Review Consistency and Polish (~10 min)
+### Bước 4: Sequence Diagram 4 — Gọi MCP Tool In-Process (~10 phút)
 
-- Verify all 4 diagrams use consistent participant naming (same class = same name across diagrams)
-- Verify Mermaid syntax: proper `sequenceDiagram` declaration, correct arrow types (`->>` for async, `-->>` for response)
-- Ensure each diagram has a title using `title:` or `%%` comment
-- Add a summary table at the top of the output file listing all 4 diagrams with one-line descriptions
-- Test each diagram renders without errors (paste into Mermaid live editor or GitHub preview)
+Hiện cách SDK MCP server xử lý gọi tool hoàn toàn in-process không qua subprocess IPC.
 
-**Verify:** All 4 diagrams render. Participant names are consistent. Each diagram has 5+ interactions. No Mermaid syntax errors.
+**Participants:**
+- `CLI` — Claude quyết định dùng tool
+- `Query` — chặn gọi tool SDK MCP
+- `MCPServer` — MCP server in-process tạo qua `create_sdk_mcp_server()`
+- `ToolHandler` — hàm do user định nghĩa với decorator `@tool`
 
-## 6. Edge Cases & Error Handling
+**Tương tác:**
+1. Claude (qua CLI) quyết định gọi tool (VD: `get_weather`)
+2. CLI gửi tool call request qua stdout (tên tool, arguments, request_id)
+3. Query nhận tool call request
+4. Query kiểm tra: đây có phải tool SDK MCP không? (vs. MCP bên ngoài)
+5. Khối `alt`: SDK MCP tool vs. External MCP
+6. Nếu SDK MCP: Query định tuyến đến instance MCPServer khớp
+7. MCPServer tìm tool theo tên trong registry
+8. MCPServer gọi `call_tool()` để thực thi ToolHandler được trang trí `@tool`
+9. ToolHandler thực thi (có thể async), trả kết quả
+10. MCPServer đóng gói kết quả thành MCP tool response
+11. Query bọc kết quả trong control response với `request_id` khớp
+12. Query gửi response cho CLI qua stdin
+13. CLI nhận kết quả tool, tiếp tục sinh
 
-| Case | Trigger | Expected | Recovery |
+Thêm `note` giải thích: "SDK MCP tools chạy trong tiến trình Python, không phải subprocess riêng".
+
+**Kiểm tra:** Xác nhận logic chặn trong `_internal/query.py`. Xác minh luồng `create_sdk_mcp_server()` và decorator `@tool` chính xác.
+
+### Bước 5: Rà soát nhất quán và hoàn thiện (~10 phút)
+
+- Xác minh tất cả 4 diagram dùng tên participant nhất quán (cùng class = cùng tên xuyên suốt)
+- Xác minh cú pháp Mermaid: khai báo `sequenceDiagram` đúng, kiểu mũi tên đúng (`->>` cho async, `-->>` cho response)
+- Đảm bảo mỗi diagram có tiêu đề dùng `title:` hoặc comment `%%`
+- Thêm bảng tóm tắt đầu file đầu ra liệt kê tất cả 4 diagram kèm mô tả 1 dòng
+- Test mỗi diagram render không lỗi (paste vào Mermaid live editor hoặc GitHub preview)
+
+**Kiểm tra:** Tất cả 4 diagram render. Tên participant nhất quán. Mỗi diagram có 5+ tương tác. Không lỗi cú pháp Mermaid.
+
+## 6. Trường hợp biên & Xử lý lỗi
+
+| Trường hợp | Điều kiện kích hoạt | Hành vi mong đợi | Cách khôi phục |
 |------|---------|----------|----------|
-| Mermaid syntax error | Typo in arrow or participant | Diagram won't render | Test each diagram individually in Mermaid live editor before committing |
-| Participants don't match code | Architecture doc outdated or wrong class names | Diagram misleads reader | Cross-reference participant names against actual class names in source code |
-| Hook flow too complex | Multiple matchers, nested alt blocks | Diagram unreadable | Split into "happy path" main diagram + "detailed alt" sub-diagram if needed |
-| MCP flow conflates external vs SDK | Mixing in-process and subprocess MCP | Confusion about where execution happens | Clearly label "in-process" in notes; keep external MCP out of scope |
-| Long interaction chains | >15 arrows in one diagram | Renders too tall, hard to follow | Group related interactions with `rect` blocks; add `note` summaries |
+| Lỗi cú pháp Mermaid | Gõ sai mũi tên hoặc participant | Diagram không render | Test từng diagram riêng trong Mermaid live editor trước khi hoàn thiện |
+| Participant không khớp code | Tài liệu kiến trúc lỗi thời hoặc sai tên class | Diagram gây hiểu nhầm | Đối chiếu tên participant với tên class thực trong mã nguồn |
+| Luồng hook quá phức tạp | Nhiều matcher, khối alt lồng nhau | Diagram không đọc được | Tách thành diagram chính "happy path" + sub-diagram "chi tiết alt" nếu cần |
+| Luồng MCP nhầm lẫn external vs SDK | Trộn lẫn in-process và subprocess MCP | Gây nhầm lẫn về nơi thực thi | Dán nhãn rõ "in-process" trong notes; giữ MCP bên ngoài ngoài phạm vi |
+| Chuỗi tương tác dài | >15 mũi tên trong một diagram | Render quá dài, khó theo dõi | Nhóm tương tác liên quan bằng khối `rect`; thêm `note` tóm tắt |
 
-## 7. Acceptance Criteria
+## 7. Tiêu chí chấp nhận (Acceptance Criteria)
 
-- **Happy 1:** Given code-architecture.md and source code verification, When 4 sequence diagrams are created, Then each has accurate participants matching real class names, 5+ interactions per diagram, and renders correctly on GitHub Markdown
-- **Happy 2:** Given the completed diagrams, When a developer reads them without looking at source code, Then they can accurately describe the data flow for query(), ClaudeSDKClient, hooks, and MCP tool calls
-- **Negative:** Given a Mermaid syntax error in a diagram, When the diagram is tested, Then the error is caught and fixed before the file is finalized
+- **Thành công 1:** Khi có code-architecture.md và xác minh mã nguồn, Khi tạo 4 sơ đồ tuần tự, Thì mỗi sơ đồ có participant chính xác khớp tên class thực, 5+ tương tác mỗi diagram, và render đúng trên GitHub Markdown
+- **Thành công 2:** Khi hoàn thành diagrams, Khi lập trình viên đọc mà không xem mã nguồn, Thì họ có thể mô tả chính xác luồng dữ liệu cho query(), ClaudeSDKClient, hooks, và gọi MCP tool
+- **Thất bại:** Khi có lỗi cú pháp Mermaid trong diagram, Khi test diagram, Thì lỗi được phát hiện và sửa trước khi file hoàn thiện
 
-## 8. Technical Notes
+## 8. Ghi chú kỹ thuật
 
-- Mermaid sequence diagram syntax reference: `sequenceDiagram`, `participant`, `->>` (solid arrow, async call), `-->>` (dashed arrow, response), `activate`/`deactivate`, `alt`/`else`/`end`, `opt`/`end`, `note right of`/`note over`
-- GitHub renders Mermaid natively in `.md` files inside ` ```mermaid ` code blocks
-- Arrow convention: `->>` for calls/requests, `-->>` for returns/responses, `--)` for async fire-and-forget
-- Keep participant aliases short for readability (e.g., `participant Q as Query`)
-- Max recommended diagram width: 6 participants (beyond that, consider splitting)
-- Python field name conversions to note: `async_` -> `async`, `continue_` -> `continue` (wire format)
+- Tham chiếu cú pháp sơ đồ tuần tự Mermaid: `sequenceDiagram`, `participant`, `->>` (mũi tên liền, gọi async), `-->>` (mũi tên nét đứt, phản hồi), `activate`/`deactivate`, `alt`/`else`/`end`, `opt`/`end`, `note right of`/`note over`
+- GitHub render Mermaid nguyên bản trong file `.md` trong khối code ` ```mermaid `
+- Quy ước mũi tên: `->>` cho calls/requests, `-->>` cho returns/responses, `--)` cho async fire-and-forget
+- Giữ alias participant ngắn để dễ đọc (VD: `participant Q as Query`)
+- Chiều rộng diagram khuyến nghị tối đa: 6 participants (quá số đó nên tách)
+- Chuyển đổi tên trường Python cần ghi chú: `async_` -> `async`, `continue_` -> `continue` (wire format)
 
-## 9. Risks
+## 9. Rủi ro
 
-- **Risk:** Architecture doc from task d0g may have gaps or inaccuracies that propagate into diagrams. **Mitigation:** Cross-reference every participant and interaction against actual source code, not just the architecture doc.
-- **Risk:** Mermaid rendering differences between GitHub and local previewer. **Mitigation:** Test final diagrams on GitHub directly (or use github.com's Mermaid support in issue/PR previews).
-- **Risk:** Hook callback flow is complex enough that a single diagram becomes unreadable. **Mitigation:** Use Mermaid's `alt`/`opt` blocks judiciously; if still too complex, create a simplified "happy path" version and a detailed version.
+- **Rủi ro:** Tài liệu kiến trúc từ task d0g có thể thiếu sót hoặc sai, lan truyền vào diagram. **Giảm thiểu:** Đối chiếu mỗi participant và tương tác với mã nguồn thực tế, không chỉ dựa vào tài liệu kiến trúc.
+- **Rủi ro:** Khác biệt render Mermaid giữa GitHub và previewer local. **Giảm thiểu:** Test diagram cuối cùng trên GitHub trực tiếp (hoặc dùng hỗ trợ Mermaid trong GitHub issue/PR preview).
+- **Rủi ro:** Luồng hook callback đủ phức tạp để một diagram trở nên không đọc được. **Giảm thiểu:** Dùng khối `alt`/`opt` Mermaid hợp lý; nếu vẫn quá phức tạp, tạo phiên bản "happy path" đơn giản và phiên bản chi tiết.
 
-## Worklog
+## Nhật ký công việc (Worklog)
 
-### [10:00] Bat dau — Doc source code
-- Doc 5 source files: query.py, client.py, _internal/query.py, _internal/client.py, subprocess_cli.py
-- Xac nhan flow chinh xac tu code thuc te (khong chi dua vao architecture doc)
+### [10:00] Bắt đầu — Đọc mã nguồn
+- Đọc 5 file mã nguồn: query.py, client.py, _internal/query.py, _internal/client.py, subprocess_cli.py
+- Xác nhận luồng chính xác từ code thực tế (không chỉ dựa vào tài liệu kiến trúc)
 
-### [10:15] Hoan thanh — 4 Sequence Diagrams
-**Ket qua:**
-- Tao file `claudeagentsdk-554-diagrams.md` voi 4 Mermaid sequence diagrams
-- Moi diagram co >= 5 interactions, participant names match class names trong code
+### [10:15] Hoàn thành — 4 Sequence Diagrams
+**Kết quả:**
+- Tạo file `claudeagentsdk-554-diagrams.md` với 4 sơ đồ tuần tự Mermaid
+- Mỗi diagram có >= 5 tương tác, tên participant khớp tên class trong code
 
-**Diagrams da ve:**
-1. **query() One-Shot Flow** — 6 participants, full lifecycle tu UserApp → InternalClient → Transport → Query → CLI
-2. **ClaudeSDKClient Interactive Session** — multi-turn + interrupt flow, 3 rect blocks (Turn 1, Turn 2, Interrupt)
-3. **Hook Callback Dispatch** — CLI-initiated callback, registration + trigger phases, alt block cho approve/block
-4. **SDK MCP In-Process Tool Call** — JSONRPC routing, init + tool call phases, alt block cho server found/not found
+**Diagrams đã vẽ:**
+1. **Luồng query() Một lần** — 6 participants, vòng đời đầy đủ từ UserApp → InternalClient → Transport → Query → CLI
+2. **Phiên tương tác ClaudeSDKClient** — đa lượt + luồng interrupt, 3 khối rect (Lượt 1, Lượt 2, Interrupt)
+3. **Dispatch Hook Callback** — callback do CLI khởi tạo, pha đăng ký + kích hoạt, khối alt cho approve/block
+4. **Gọi MCP Tool SDK In-Process** — JSONRPC routing, pha init + tool call, khối alt cho server found/not found
 
-**Key findings tu source code:**
-- Transport LUON dung `--input-format stream-json` (subprocess_cli.py:331)
-- String prompt: user message gui sau initialize, roi goi wait_for_result_and_end_input()
-- Hook callbacks: callback_id generated sequentially ("hook_0", "hook_1"...), stored in dict
-- MCP: manual JSONRPC routing vi Python MCP SDK thieu Transport abstraction
-- Field conversion: async_ → async, continue_ → continue (query.py:34-50)
+**Phát hiện quan trọng từ mã nguồn:**
+- Transport LUÔN dùng `--input-format stream-json` (subprocess_cli.py:331)
+- String prompt: user message gửi sau initialize, rồi gọi wait_for_result_and_end_input()
+- Hook callbacks: callback_id sinh tuần tự ("hook_0", "hook_1"...), lưu trong dict
+- MCP: JSONRPC routing thủ công vì Python MCP SDK thiếu Transport abstraction
+- Chuyển đổi trường: async_ → async, continue_ → continue (query.py:34-50)
 
-**Files tao:**
+**File đã tạo:**
 - self-explores/tasks/claudeagentsdk-554-diagrams.md

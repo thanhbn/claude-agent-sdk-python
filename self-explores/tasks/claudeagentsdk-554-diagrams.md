@@ -1,17 +1,17 @@
-# Sequence Diagrams — Claude Agent SDK Python
+# Sơ đồ tuần tự — Claude Agent SDK Python
 
-| # | Diagram | Description | Participants |
+| # | Sơ đồ | Mô tả | Participants |
 |---|---------|-------------|--------------|
-| 1 | query() One-Shot Flow | Complete lifecycle of a stateless one-shot query | UserApp, query(), InternalClient, Transport, Query, CLI |
-| 2 | ClaudeSDKClient Interactive Session | Multi-turn bidirectional conversation with interrupt | UserApp, ClaudeSDKClient, Transport, Query, CLI |
-| 3 | Hook Callback Dispatch | CLI-initiated hook callback routed to Python handler | CLI, Transport, Query, UserHookFn |
-| 4 | SDK MCP In-Process Tool Call | In-process MCP tool execution via @tool decorator | CLI, Transport, Query, MCPServer, ToolHandler |
+| 1 | Luồng query() một lần | Vòng đời đầy đủ của truy vấn stateless một lần | UserApp, query(), InternalClient, Transport, Query, CLI |
+| 2 | Phiên tương tác ClaudeSDKClient | Hội thoại hai chiều đa lượt kèm interrupt | UserApp, ClaudeSDKClient, Transport, Query, CLI |
+| 3 | Dispatch Hook Callback | Hook callback do CLI khởi tạo, định tuyến đến Python handler | CLI, Transport, Query, UserHookFn |
+| 4 | Gọi MCP Tool SDK In-Process | Thực thi MCP tool in-process qua decorator @tool | CLI, Transport, Query, MCPServer, ToolHandler |
 
 ---
 
-## 1. query() One-Shot Flow
+## 1. Luồng query() một lần
 
-Shows the complete lifecycle when a user calls `query(prompt="...", options=...)`. The SDK creates an `InternalClient`, which sets up transport and `Query`, performs the initialize handshake, sends the prompt, streams responses, and tears everything down.
+Hiện toàn bộ vòng đời khi user gọi `query(prompt="...", options=...)`. SDK tạo `InternalClient`, thiết lập transport và `Query`, thực hiện bắt tay initialize, gửi prompt, stream phản hồi, và dọn dẹp toàn bộ.
 
 ```mermaid
 sequenceDiagram
@@ -84,18 +84,18 @@ sequenceDiagram
     deactivate T
 ```
 
-**Key points from source code:**
-- `query()` in `query.py:11` creates `InternalClient` and delegates to `process_query()`
-- `InternalClient.process_query()` in `_internal/client.py:44` orchestrates the full lifecycle
-- Transport always uses `--input-format stream-json` (line 331 in subprocess_cli.py)
-- For string prompts, the user message is written to stdin after initialize (client.py:126-133)
-- `wait_for_result_and_end_input()` keeps stdin open if hooks/MCP servers need bidirectional communication
+**Điểm quan trọng từ mã nguồn:**
+- `query()` trong `query.py:11` tạo `InternalClient` và uỷ quyền cho `process_query()`
+- `InternalClient.process_query()` trong `_internal/client.py:44` điều phối toàn bộ vòng đời
+- Transport luôn dùng `--input-format stream-json` (dòng 331 trong subprocess_cli.py)
+- Với string prompt, user message được ghi vào stdin sau initialize (client.py:126-133)
+- `wait_for_result_and_end_input()` giữ stdin mở nếu hooks/MCP servers cần giao tiếp hai chiều
 
 ---
 
-## 2. ClaudeSDKClient Interactive Session
+## 2. Phiên tương tác ClaudeSDKClient
 
-Shows a multi-turn conversation session using `ClaudeSDKClient` as an async context manager, including follow-up messages and interrupt capability.
+Hiện một phiên hội thoại đa lượt dùng `ClaudeSDKClient` như async context manager, bao gồm message tiếp nối và khả năng interrupt.
 
 ```mermaid
 sequenceDiagram
@@ -190,18 +190,18 @@ sequenceDiagram
     deactivate T
 ```
 
-**Key points from source code:**
-- `ClaudeSDKClient.__aenter__()` calls `connect()` with no prompt → uses empty async generator (client.py:102-107)
-- `client.query()` in `client.py:197` writes user messages directly to transport via JSON
-- `receive_response()` in `client.py:442` wraps `receive_messages()` and stops after `ResultMessage`
-- `interrupt()` sends a control request with `subtype: "interrupt"` (query.py:536-538)
-- `__aexit__()` always calls `disconnect()` → `query.close()` → `transport.close()`
+**Điểm quan trọng từ mã nguồn:**
+- `ClaudeSDKClient.__aenter__()` gọi `connect()` không có prompt → dùng async generator rỗng (client.py:102-107)
+- `client.query()` trong `client.py:197` ghi user messages trực tiếp vào transport qua JSON
+- `receive_response()` trong `client.py:442` bọc `receive_messages()` và dừng sau `ResultMessage`
+- `interrupt()` gửi control request với `subtype: "interrupt"` (query.py:536-538)
+- `__aexit__()` luôn gọi `disconnect()` → `query.close()` → `transport.close()`
 
 ---
 
-## 3. Hook Callback Dispatch
+## 3. Dispatch Hook Callback
 
-Shows how the CLI initiates a hook callback (e.g., PreToolUse) and how the SDK's `Query` class dispatches it to user-defined Python async functions. This is the most complex flow because the CLI is the initiator.
+Hiện cách CLI khởi tạo hook callback (VD: PreToolUse) và cách lớp `Query` của SDK dispatch nó đến hàm async Python do user định nghĩa. Đây là luồng phức tạp nhất vì CLI là bên khởi tạo.
 
 ```mermaid
 sequenceDiagram
@@ -253,18 +253,18 @@ sequenceDiagram
     end
 ```
 
-**Key points from source code:**
-- Hook registration happens in `Query.initialize()` (query.py:119-163): each hook gets a unique `callback_id` mapped to the Python function
-- CLI sends hook callbacks as `control_request` with `subtype: "hook_callback"` (query.py:288)
-- `_handle_control_request()` at query.py:236 dispatches based on subtype
-- Python field names `async_` and `continue_` are converted to `async`/`continue` for the wire format by `_convert_hook_output_for_cli()` (query.py:34-50)
-- Response matching uses `request_id` to correlate requests and responses
+**Điểm quan trọng từ mã nguồn:**
+- Đăng ký hook xảy ra trong `Query.initialize()` (query.py:119-163): mỗi hook nhận `callback_id` duy nhất ánh xạ đến hàm Python
+- CLI gửi hook callbacks dạng `control_request` với `subtype: "hook_callback"` (query.py:288)
+- `_handle_control_request()` tại query.py:236 dispatch dựa trên subtype
+- Tên trường Python `async_` và `continue_` được chuyển thành `async`/`continue` cho wire format bởi `_convert_hook_output_for_cli()` (query.py:34-50)
+- Khớp response dùng `request_id` để tương quan requests và responses
 
 ---
 
-## 4. SDK MCP In-Process Tool Call
+## 4. Gọi MCP Tool SDK In-Process
 
-Shows how SDK MCP servers (defined via `@tool` decorator and `create_sdk_mcp_server()`) handle tool calls entirely in-process. Unlike external MCP servers that run as subprocesses, SDK MCP tools execute within the Python process.
+Hiện cách SDK MCP servers (định nghĩa qua decorator `@tool` và `create_sdk_mcp_server()`) xử lý gọi tool hoàn toàn in-process. Khác với MCP server bên ngoài chạy như subprocess, SDK MCP tools thực thi ngay trong tiến trình Python.
 
 ```mermaid
 sequenceDiagram
@@ -331,10 +331,10 @@ sequenceDiagram
     end
 ```
 
-**Key points from source code:**
-- SDK MCP servers are extracted from `options.mcp_servers` where `type == "sdk"` (client.py:143-147)
-- `_handle_sdk_mcp_request()` at query.py:394 manually routes JSONRPC methods since Python MCP SDK lacks Transport abstraction
-- Supported methods: `initialize`, `tools/list`, `tools/call`, `notifications/initialized` (query.py:431-514)
-- Tool calls go through `server.request_handlers[CallToolRequest]` which invokes the `@tool`-decorated handler
-- The `instance` field is stripped from SDK server config before passing to CLI (subprocess_cli.py:246-250)
-- All communication is in-process — no subprocess IPC for SDK MCP tools
+**Điểm quan trọng từ mã nguồn:**
+- SDK MCP servers được trích xuất từ `options.mcp_servers` nơi `type == "sdk"` (client.py:143-147)
+- `_handle_sdk_mcp_request()` tại query.py:394 định tuyến JSONRPC methods thủ công vì Python MCP SDK thiếu Transport abstraction
+- Methods được hỗ trợ: `initialize`, `tools/list`, `tools/call`, `notifications/initialized` (query.py:431-514)
+- Gọi tool đi qua `server.request_handlers[CallToolRequest]` để gọi handler được trang trí `@tool`
+- Trường `instance` bị loại bỏ khỏi SDK server config trước khi truyền cho CLI (subprocess_cli.py:246-250)
+- Tất cả giao tiếp đều in-process — không có subprocess IPC cho SDK MCP tools

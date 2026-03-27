@@ -2,119 +2,119 @@
 date: 2026-03-21
 type: task-worklog
 task: claudeagentsdk-7mq
-title: "Ve Use Case Diagram"
-status: open
+title: "Vẽ Use Case Diagram"
+status: completed
 detailed_at: 2026-03-21
 detail_score: ready-for-dev
 tags: [diagram, use-case, uml, draw-io, mermaid, phase-2]
 ---
 
-# Ve Use Case Diagram — Detailed Design
+# Vẽ Use Case Diagram — Thiết kế chi tiết
 
-## 1. Objective
+## 1. Mục tiêu
 
-Create a UML Use Case diagram with correctly classified actors (primary, system, external) showing all major SDK capabilities, using draw.io MCP as primary tool with Mermaid flowchart as fallback.
+Tạo sơ đồ ca sử dụng (Use Case diagram) UML với các actor được phân loại đúng (primary, system, external) thể hiện tất cả khả năng chính của SDK, dùng draw.io MCP làm công cụ chính và Mermaid flowchart làm phương án dự phòng.
 
-## 2. Scope
+## 2. Phạm vi
 
-**In-scope:**
-- 3 actors with correct UML classification (Developer = primary, Claude Code CLI = system, External MCP Server = external)
-- 8+ use cases covering the full SDK capability surface
-- Actor-to-use-case relationships (association, include, extend)
-- Grouping use cases by subsystem boundary
-- Both draw.io and Mermaid fallback approaches
+**Trong phạm vi:**
+- 3 actor với phân loại UML đúng (Developer = primary, Claude Code CLI = system, External MCP Server = external)
+- 8+ ca sử dụng bao phủ toàn bộ bề mặt khả năng SDK
+- Quan hệ actor-use case (association, include, extend)
+- Nhóm ca sử dụng theo ranh giới hệ thống con (subsystem boundary)
+- Cả hai cách tiếp cận draw.io và Mermaid dự phòng
 
-**Out-of-scope:**
-- Activity diagrams or state diagrams (different task)
-- Internal implementation details within use cases
-- Non-SDK use cases (e.g., direct CLI usage without the SDK)
-- Hook System as an actor (it is a subsystem/mechanism, not an actor)
-- Detailed use case specifications/narratives (covered in task qw0)
+**Ngoài phạm vi:**
+- Sơ đồ hoạt động (activity diagram) hoặc sơ đồ trạng thái (state diagram) (task khác)
+- Chi tiết triển khai nội bộ bên trong ca sử dụng
+- Ca sử dụng ngoài SDK (VD: dùng CLI trực tiếp không qua SDK)
+- Hook System như actor (nó là hệ thống con/cơ chế, không phải actor)
+- Đặc tả chi tiết ca sử dụng/narrative (đã bao phủ trong task qw0)
 
-## 3. Input / Output
+## 3. Đầu vào / Đầu ra
 
-**Input:**
-- `self-explores/context/use-case-guide.md` (from task qw0) — analyzed use cases with actor mapping
-- SDK public API surface from `src/claude_agent_sdk/__init__.py` and `src/claude_agent_sdk/client.py`
+**Đầu vào:**
+- `self-explores/context/use-case-guide.md` (từ task qw0) — ca sử dụng đã phân tích kèm ánh xạ actor
+- Bề mặt API công khai SDK từ `src/claude_agent_sdk/__init__.py` và `src/claude_agent_sdk/client.py`
 
-**Output:**
-- Primary: draw.io diagram file (if MCP available) at `self-explores/tasks/claudeagentsdk-7mq-usecase.drawio` or equivalent
-- Fallback: `self-explores/tasks/claudeagentsdk-7mq-usecase.md` containing Mermaid flowchart styled as use case diagram
-- Both: descriptive text explaining actor classification rationale
+**Đầu ra:**
+- Chính: file diagram draw.io (nếu MCP khả dụng) tại `self-explores/tasks/claudeagentsdk-7mq-usecase.drawio` hoặc tương đương
+- Dự phòng: `self-explores/tasks/claudeagentsdk-7mq-usecase.md` chứa Mermaid flowchart theo phong cách use case diagram
+- Cả hai: text mô tả giải thích lý do phân loại actor
 
-## 4. Dependencies
+## 4. Phụ thuộc (Dependencies)
 
-- `claudeagentsdk-qw0` (use case guide) — MUST be completed first; provides the analyzed use cases and actor identification
-- Tool dependencies: `mcp__drawio__open_drawio_mermaid` (primary), Mermaid syntax (fallback)
+- `claudeagentsdk-qw0` (hướng dẫn use case) — PHẢI hoàn thành trước; cung cấp ca sử dụng đã phân tích và xác định actor
+- Phụ thuộc công cụ: `mcp__drawio__open_drawio_mermaid` (chính), cú pháp Mermaid (dự phòng)
 
-## 5. Flow
+## 5. Luồng xử lý (Flow)
 
-### Step 1: Define Actors with UML Classification (~5 min)
+### Bước 1: Định nghĩa Actor với phân loại UML (~5 phút)
 
-Establish the 3 actors with correct UML stereotypes:
+Thiết lập 3 actor với UML stereotype đúng:
 
-1. **Developer** (Primary Actor, stick figure on LEFT)
-   - The human user who writes Python code using the SDK
-   - Initiates all use cases
+1. **Developer** (Actor chính, hình người bên TRÁI)
+   - Con người viết code Python dùng SDK
+   - Khởi tạo tất cả ca sử dụng
    - Stereotype: `<<primary>>`
 
-2. **Claude Code CLI** (System Actor, stick figure on RIGHT or box)
-   - The subprocess that the SDK wraps
-   - Participates in all use cases as the execution backend
+2. **Claude Code CLI** (Actor hệ thống, hình người bên PHẢI hoặc hộp)
+   - Subprocess mà SDK bọc lại
+   - Tham gia tất cả ca sử dụng như backend thực thi
    - Stereotype: `<<system>>`
 
-3. **External MCP Server** (External Actor, stick figure on RIGHT)
-   - Third-party MCP servers connected via subprocess
-   - Only participates in external MCP use cases
+3. **External MCP Server** (Actor bên ngoài, hình người bên PHẢI)
+   - MCP server bên thứ ba kết nối qua subprocess
+   - Chỉ tham gia ca sử dụng MCP bên ngoài
    - Stereotype: `<<external>>`
 
-**Why NOT Hook System as actor:** In UML, an actor is an entity outside the system boundary that interacts with it. The Hook System is internal to the SDK — it is a mechanism/subsystem, not an actor. Hooks are triggered by the Developer (who defines them) and the CLI (which sends hook callbacks).
+**Tại sao KHÔNG có Hook System như actor:** Trong UML, actor là thực thể bên ngoài ranh giới hệ thống tương tác với nó. Hook System nằm bên trong SDK — nó là cơ chế/hệ thống con, không phải actor. Hooks được kích hoạt bởi Developer (người định nghĩa) và CLI (gửi hook callbacks).
 
-**Verify:** Actor list matches UML conventions. No internal subsystems misclassified as actors.
+**Kiểm tra:** Danh sách actor tuân theo quy ước UML. Không hệ thống con nội bộ nào bị phân loại nhầm thành actor.
 
-### Step 2: List and Categorize Use Cases (~10 min)
+### Bước 2: Liệt kê và phân loại Ca sử dụng (~10 phút)
 
-Extract use cases from qw0 output and organize by subsystem:
+Trích xuất ca sử dụng từ kết quả qw0 và tổ chức theo hệ thống con:
 
-**Core Query Subsystem:**
-- UC1: Execute Simple Query (Developer -> CLI)
-- UC2: Run Interactive Conversation (Developer -> CLI)
-- UC3: Stream Response Messages (Developer -> CLI)
+**Hệ thống con Truy vấn cốt lõi:**
+- UC1: Thực hiện truy vấn đơn giản (Developer -> CLI)
+- UC2: Chạy hội thoại tương tác (Developer -> CLI)
+- UC3: Stream message phản hồi (Developer -> CLI)
 
-**Tool & Extension Subsystem:**
-- UC4: Define Custom MCP Tools (Developer)
-- UC5: Connect External MCP Servers (Developer -> External MCP Server)
-- UC6: Orchestrate Agent with Tools (Developer -> CLI -> External MCP Server)
+**Hệ thống con Công cụ & Mở rộng:**
+- UC4: Định nghĩa MCP tool tuỳ chỉnh (Developer)
+- UC5: Kết nối MCP server bên ngoài (Developer -> External MCP Server)
+- UC6: Điều phối agent với tools (Developer -> CLI -> External MCP Server)
 
-**Control & Safety Subsystem:**
-- UC7: Control Tool Permissions via Hooks (Developer -> CLI)
-- UC8: Manage Permission Mode (Developer -> CLI)
-- UC9: Set Budget/Token Limits (Developer -> CLI)
+**Hệ thống con Kiểm soát & An toàn:**
+- UC7: Kiểm soát quyền tool qua hooks (Developer -> CLI)
+- UC8: Quản lý chế độ phân quyền (Developer -> CLI)
+- UC9: Đặt giới hạn ngân sách/token (Developer -> CLI)
 
-**Session & Configuration Subsystem:**
-- UC10: Customize System Prompt (Developer -> CLI)
-- UC11: Manage Session State (Developer -> CLI)
-- UC12: Configure Model Parameters (Developer -> CLI)
+**Hệ thống con Session & Cấu hình:**
+- UC10: Tuỳ chỉnh system prompt (Developer -> CLI)
+- UC11: Quản lý trạng thái session (Developer -> CLI)
+- UC12: Cấu hình tham số model (Developer -> CLI)
 
-Identify `<<include>>` and `<<extend>>` relationships:
-- UC2 `<<include>>` UC3 (interactive always streams)
-- UC6 `<<include>>` UC5 (agent orchestration requires MCP)
-- UC7 `<<extend>>` UC1 (hooks optionally extend queries)
-- UC9 `<<extend>>` UC1 (budget optionally extends queries)
+Xác định quan hệ `<<include>>` và `<<extend>>`:
+- UC2 `<<include>>` UC3 (tương tác luôn stream)
+- UC6 `<<include>>` UC5 (điều phối agent cần MCP)
+- UC7 `<<extend>>` UC1 (hooks tuỳ chọn mở rộng queries)
+- UC9 `<<extend>>` UC1 (ngân sách tuỳ chọn mở rộng queries)
 
-**Verify:** At least 8 unique use cases identified. Each use case has at least one actor association. Include/extend relationships are semantically correct.
+**Kiểm tra:** Ít nhất 8 ca sử dụng duy nhất. Mỗi ca có ít nhất một liên kết actor. Quan hệ include/extend đúng ngữ nghĩa.
 
-### Step 3: Draw Diagram with draw.io MCP (~10 min)
+### Bước 3: Vẽ Diagram với draw.io MCP (~10 phút)
 
-**Primary approach — draw.io MCP:**
+**Cách tiếp cận chính — draw.io MCP:**
 
-Use `mcp__drawio__open_drawio_mermaid` to create the diagram. Since draw.io MCP accepts Mermaid syntax, prepare a Mermaid graph that represents the use case diagram:
+Dùng `mcp__drawio__open_drawio_mermaid` để tạo diagram. Vì draw.io MCP chấp nhận cú pháp Mermaid, chuẩn bị Mermaid graph đại diện use case diagram:
 
 ```
 graph LR
     subgraph "claude-agent-sdk System Boundary"
-        UC1[Execute Simple Query]
-        UC2[Run Interactive Conversation]
+        UC1[Thực hiện truy vấn đơn giản]
+        UC2[Chạy hội thoại tương tác]
         ...
     end
     Developer((Developer)) --> UC1
@@ -122,84 +122,84 @@ graph LR
     ...
 ```
 
-Style actors as circles `(( ))`, use cases as rounded rectangles `[ ]`, system boundary as `subgraph`.
+Tạo kiểu actor dạng vòng tròn `(( ))`, ca sử dụng dạng hình chữ nhật bo góc `[ ]`, ranh giới hệ thống dạng `subgraph`.
 
-**Fallback approach — Mermaid in Markdown:**
+**Cách tiếp cận dự phòng — Mermaid trong Markdown:**
 
-If `mcp__drawio__open_drawio_mermaid` fails or is unavailable, create the same diagram as a Mermaid flowchart in a Markdown file. Use:
-- `graph LR` (left-to-right layout)
-- `subgraph` for system boundary
-- `(( ))` for actors (circle shape)
-- `([  ])` for use cases (stadium shape, closest to UML oval)
-- `-.->` for `<<extend>>`, `-->` for association, `==>` for `<<include>>`
+Nếu `mcp__drawio__open_drawio_mermaid` lỗi hoặc không khả dụng, tạo diagram tương tự dạng Mermaid flowchart trong file Markdown. Dùng:
+- `graph LR` (bố cục trái-sang-phải)
+- `subgraph` cho ranh giới hệ thống
+- `(( ))` cho actor (hình tròn)
+- `([  ])` cho ca sử dụng (hình sân vận động, gần nhất với hình bầu dục UML)
+- `-.->` cho `<<extend>>`, `-->` cho association, `==>` cho `<<include>>`
 
-**Verify:** Diagram renders without errors. All 3 actors visible. All use cases inside system boundary. Relationships have correct arrow types.
+**Kiểm tra:** Diagram render không lỗi. Tất cả 3 actor hiện diện. Tất cả ca sử dụng trong ranh giới hệ thống. Quan hệ có kiểu mũi tên đúng.
 
-### Step 4: Review and Add Descriptions (~5 min)
+### Bước 4: Rà soát và thêm mô tả (~5 phút)
 
-- Add a legend explaining actor stereotypes and relationship types
-- Add a brief description (1 sentence) for each use case below the diagram
-- Verify completeness: every use case from Step 2 appears in the diagram
-- Verify correctness: no use case has an impossible actor association
-- Add title and date to the output file
+- Thêm chú giải (legend) giải thích actor stereotype và kiểu quan hệ
+- Thêm mô tả ngắn (1 câu) cho mỗi ca sử dụng phía dưới diagram
+- Kiểm tra đầy đủ: mọi ca sử dụng từ Bước 2 đều xuất hiện trong diagram
+- Kiểm tra đúng đắn: không ca sử dụng nào có liên kết actor bất khả thi
+- Thêm tiêu đề và ngày vào file đầu ra
 
-**Verify:** Legend present. All use cases have descriptions. Actor associations are plausible.
+**Kiểm tra:** Chú giải có mặt. Tất cả ca sử dụng có mô tả. Liên kết actor hợp lý.
 
-## 6. Edge Cases & Error Handling
+## 6. Trường hợp biên & Xử lý lỗi
 
-| Case | Trigger | Expected | Recovery |
+| Trường hợp | Điều kiện kích hoạt | Hành vi mong đợi | Cách khôi phục |
 |------|---------|----------|----------|
-| draw.io MCP not available | MCP server not configured or connection fails | Cannot create draw.io diagram | Fall back to Mermaid flowchart in Markdown file immediately |
-| Too many use cases | >15 use cases identified | Diagram becomes cluttered and unreadable | Group by subsystem using nested `subgraph` blocks; limit to 12 most important |
-| Mermaid has no native UC diagram | Mermaid syntax lacks `usecase` keyword | Cannot create true UML use case diagram | Use `graph LR` with styled nodes: `(( ))` for actors, `([  ])` for use cases |
-| Use case guide (qw0) incomplete | Task qw0 not fully finished or output missing | Missing use cases or actor info | Extract use cases directly from SDK public API surface as backup |
-| draw.io MCP produces unreadable layout | Auto-layout places elements poorly | Diagram hard to understand | Add explicit positioning hints or switch to Mermaid where layout is more predictable |
+| draw.io MCP không khả dụng | MCP server không cấu hình hoặc kết nối lỗi | Không tạo được diagram draw.io | Chuyển ngay sang Mermaid flowchart trong file Markdown |
+| Quá nhiều ca sử dụng | >15 ca sử dụng | Diagram lộn xộn không đọc được | Nhóm theo hệ thống con dùng khối `subgraph` lồng nhau; giới hạn 12 quan trọng nhất |
+| Mermaid không có UC diagram native | Cú pháp Mermaid thiếu từ khoá `usecase` | Không tạo được UML use case diagram thật | Dùng `graph LR` với node có kiểu: `(( ))` cho actor, `([  ])` cho ca sử dụng |
+| Hướng dẫn use case (qw0) chưa đầy đủ | Task qw0 chưa hoàn thành hoặc thiếu output | Thiếu ca sử dụng hoặc thông tin actor | Trích xuất ca sử dụng trực tiếp từ bề mặt API công khai SDK làm backup |
+| draw.io MCP cho layout khó đọc | Auto-layout đặt phần tử kém | Diagram khó hiểu | Thêm gợi ý vị trí rõ ràng hoặc chuyển sang Mermaid nơi layout dễ đoán hơn |
 
-## 7. Acceptance Criteria
+## 7. Tiêu chí chấp nhận (Acceptance Criteria)
 
-- **Happy 1:** Given use cases analyzed in task qw0, When diagram is created, Then it contains 3+ correctly classified actors (primary/system/external), 8+ use cases, and correct UML relationships (association, include, extend)
-- **Happy 2:** Given the completed diagram, When a developer or PM views it, Then they can identify all major SDK capabilities and which actors are involved without reading documentation
-- **Negative:** Given draw.io MCP is unavailable, When fallback to Mermaid flowchart is used, Then the Mermaid diagram still represents all 3 actors, 8+ use cases, and renders correctly on GitHub
+- **Thành công 1:** Khi ca sử dụng đã phân tích trong task qw0, Khi tạo diagram, Thì chứa 3+ actor phân loại đúng (primary/system/external), 8+ ca sử dụng, và quan hệ UML đúng (association, include, extend)
+- **Thành công 2:** Khi hoàn thành diagram, Khi lập trình viên hoặc PM xem nó, Thì họ có thể xác định tất cả khả năng SDK chính và actor nào liên quan mà không cần đọc tài liệu
+- **Thất bại:** Khi draw.io MCP không khả dụng, Khi dùng Mermaid flowchart dự phòng, Thì diagram Mermaid vẫn đại diện tất cả 3 actor, 8+ ca sử dụng, và render đúng trên GitHub
 
-## 8. Technical Notes
+## 8. Ghi chú kỹ thuật
 
-- draw.io MCP tool: `mcp__drawio__open_drawio_mermaid` — accepts Mermaid syntax and opens in draw.io for visual editing
-- Mermaid does NOT have a native `usecaseDiagram` type (unlike PlantUML); must simulate with `graph` or `flowchart`
-- PlantUML has native `@startuml` use case syntax but is not natively rendered on GitHub — Mermaid is preferred for GitHub compatibility
-- For the Mermaid fallback, use this node styling convention:
-  - Actors: `ActorName((Actor Name))` (double parentheses = circle)
-  - Use cases: `UC1([Use Case Name])` (parentheses + brackets = stadium/oval shape)
-  - System boundary: `subgraph "System Name"` ... `end`
-- Arrow conventions: `-->` solid = association, `-.->|<<extend>>|` dashed = extend, `-->|<<include>>|` labeled solid = include
+- Công cụ draw.io MCP: `mcp__drawio__open_drawio_mermaid` — chấp nhận cú pháp Mermaid và mở trong draw.io để chỉnh sửa trực quan
+- Mermaid KHÔNG có kiểu `usecaseDiagram` native (khác PlantUML); phải mô phỏng bằng `graph` hoặc `flowchart`
+- PlantUML có cú pháp `@startuml` use case native nhưng không render native trên GitHub — Mermaid được ưu tiên cho tương thích GitHub
+- Cho Mermaid dự phòng, dùng quy ước node sau:
+  - Actor: `ActorName((Tên Actor))` (ngoặc kép = hình tròn)
+  - Ca sử dụng: `UC1([Tên Ca Sử Dụng])` (ngoặc + móc vuông = hình sân vận động/bầu dục)
+  - Ranh giới hệ thống: `subgraph "Tên Hệ Thống"` ... `end`
+- Quy ước mũi tên: `-->` liền = association, `-.->|<<extend>>|` nét đứt = extend, `-->|<<include>>|` liền có nhãn = include
 
-## 9. Risks
+## 9. Rủi ro
 
-- **Risk:** draw.io MCP may not be configured in the current environment, wasting time on the primary approach. **Mitigation:** Test MCP availability with a simple call before investing time in draw.io-specific formatting. Budget only 2 minutes for the test.
-- **Risk:** Mermaid flowchart looks too different from standard UML use case diagram, confusing readers familiar with UML. **Mitigation:** Add a clear legend and note stating "Rendered as flowchart due to Mermaid limitations; follows UML use case semantics."
-- **Risk:** Use cases from task qw0 may not cover all SDK capabilities if qw0 analysis was incomplete. **Mitigation:** Cross-reference use cases against the SDK's public API (`__init__.py` exports) to catch gaps.
+- **Rủi ro:** draw.io MCP có thể không được cấu hình trong môi trường hiện tại, lãng phí thời gian cho cách tiếp cận chính. **Giảm thiểu:** Test khả dụng MCP bằng lệnh gọi đơn giản trước khi đầu tư thời gian vào format draw.io. Giới hạn 2 phút cho test.
+- **Rủi ro:** Mermaid flowchart trông quá khác so với UML use case diagram chuẩn, gây nhầm lẫn cho người quen UML. **Giảm thiểu:** Thêm chú giải rõ ràng và ghi chú "Render dạng flowchart do hạn chế Mermaid; tuân theo ngữ nghĩa UML use case."
+- **Rủi ro:** Ca sử dụng từ task qw0 có thể không bao phủ hết khả năng SDK nếu phân tích qw0 chưa đầy đủ. **Giảm thiểu:** Đối chiếu ca sử dụng với exports API công khai SDK (`__init__.py`) để phát hiện thiếu sót.
 
-## Worklog
+## Nhật ký công việc (Worklog)
 
-### [10:40] Bat dau
-- Doc use-case-guide.md + task worklog chi tiet
+### [10:40] Bắt đầu
+- Đọc use-case-guide.md + worklog task chi tiết
 
-### [10:50] Hoan thanh — Use Case Diagram
-**Ket qua:**
-- Tao `claudeagentsdk-7mq-usecase.md` voi Mermaid use case diagram
-- Mo draw.io MCP thanh cong — diagram render trong browser
+### [10:50] Hoàn thành — Use Case Diagram
+**Kết quả:**
+- Tạo `claudeagentsdk-7mq-usecase.md` với Mermaid use case diagram
+- Mở draw.io MCP thành công — diagram render trong trình duyệt
 
 **Diagram:**
-- 3 actors dung UML: Developer (primary), Claude Code CLI (system), External MCP Server (external)
-- 12 use cases chia 4 subsystems:
-  - Core Query (3): Simple Query, Interactive Conversation, Stream Messages
-  - Tool & Extension (3): Custom MCP Tools, External MCP, Agent Orchestration
-  - Control & Safety (4): Hooks, Permission Mode, Budget, Tool Permissions
-  - Session & Config (2): System Prompt/Model, Session State
-- 2 include relationships: UC2→UC3, UC6→UC5
-- 3 extend relationships: UC7→UC1, UC9→UC1, UC10→UC2
-- Color-coded: green (core), blue (tools), red (control), purple (config)
-- Legend + descriptions table cho moi use case
+- 3 actor đúng UML: Developer (primary), Claude Code CLI (system), External MCP Server (external)
+- 12 ca sử dụng chia 4 hệ thống con:
+  - Core Query (3): Truy vấn đơn giản, Hội thoại tương tác, Stream Messages
+  - Tool & Extension (3): Custom MCP Tools, External MCP, Điều phối Agent
+  - Control & Safety (4): Hooks, Chế độ phân quyền, Ngân sách, Quyền Tool
+  - Session & Config (2): System Prompt/Model, Trạng thái Session
+- 2 quan hệ include: UC2→UC3, UC6→UC5
+- 3 quan hệ extend: UC7→UC1, UC9→UC1, UC10→UC2
+- Mã màu: xanh lá (core), xanh dương (tools), đỏ (control), tím (config)
+- Chú giải + bảng mô tả cho mỗi ca sử dụng
 
-**Files tao:**
-- self-explores/tasks/claudeagentsdk-7mq-usecase.md (Mermaid + descriptions)
-- draw.io diagram opened via MCP
+**File đã tạo:**
+- self-explores/tasks/claudeagentsdk-7mq-usecase.md (Mermaid + mô tả)
+- Diagram draw.io mở qua MCP

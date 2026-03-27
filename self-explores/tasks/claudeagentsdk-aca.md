@@ -2,224 +2,224 @@
 date: 2026-03-21
 type: task-worklog
 task: claudeagentsdk-aca
-title: "Tong hop (executive summary + cheatsheet)"
+title: "Tổng hợp (executive summary + cheatsheet)"
 status: open
 detailed_at: 2026-03-21
 detail_score: ready-for-dev
 tags: [summary, cheatsheet, synthesis, phase-3]
 ---
 
-# Tong hop (Executive Summary + Cheatsheet) — Detailed Design
+# Tổng hợp (Executive Summary + Cheatsheet) — Thiết kế chi tiết
 
-## 1. Objective
+## 1. Mục tiêu
 
-Create a synthesized executive summary (<500 words) and a quick-reference cheatsheet (10+ operations with runnable code snippets) that add value beyond the source materials — not copy-paste, but distilled insight and practical shortcuts.
+Tạo bản tóm tắt tổng quan (<500 từ) và cheatsheet tham chiếu nhanh (10+ thao tác với code snippet chạy được) bổ sung giá trị ngoài tài liệu nguồn — không copy-paste, mà là insight đã chưng cất và shortcut thực tiễn.
 
-## 2. Scope
+## 2. Phạm vi
 
-**In-scope:**
-- Executive summary covering: architecture overview, key design decisions, when to use query() vs ClaudeSDKClient, primary use case recommendations
-- Cheatsheet with 10+ common operations: code snippets that a developer can copy and run
-- Updated `_index.md` with navigation links to new files
-- Synthesis across ALL Phase 1 and Phase 2 outputs (not just one source)
+**Trong phạm vi:**
+- Tóm tắt tổng quan bao phủ: tổng quan kiến trúc, quyết định thiết kế chính, khi nào dùng query() vs ClaudeSDKClient, khuyến nghị use case chính
+- Cheatsheet với 10+ thao tác phổ biến: code snippets mà lập trình viên có thể copy và chạy
+- Cập nhật `_index.md` với links điều hướng đến các file mới
+- Tổng hợp xuyên suốt TẤT CẢ đầu ra Phase 1 và Phase 2 (không chỉ một nguồn)
 
-**Out-of-scope:**
-- Comprehensive API reference (that's what docs are for)
-- Tutorial-style walkthroughs (covered in Feynman task 1ig)
-- Diagrams (already created in tasks 554 and 7mq)
-- Publishing or sharing (covered in task x9j)
-- Re-analyzing source code (use existing analysis outputs only)
+**Ngoài phạm vi:**
+- Tham chiếu API toàn diện (đó là việc của docs)
+- Hướng dẫn dạng tutorial từng bước (đã bao phủ trong task Feynman 1ig)
+- Sơ đồ (đã tạo trong task 554 và 7mq)
+- Xuất bản hoặc chia sẻ (bao phủ trong task x9j)
+- Phân tích lại mã nguồn (chỉ dùng đầu ra phân tích hiện có)
 
-## 3. Input / Output
+## 3. Đầu vào / Đầu ra
 
-**Input:**
-- `self-explores/context/docs-summary.md` (from task 2e7 — official docs analysis)
-- `self-explores/context/code-architecture.md` (from task d0g — code structure analysis)
-- `self-explores/context/learning-resources.md` (from task fl0 — curated resources)
-- `self-explores/context/use-case-guide.md` (from task qw0 — use case analysis)
-- `self-explores/tasks/claudeagentsdk-554-diagrams.md` (from task 554 — sequence diagrams)
-- `self-explores/tasks/claudeagentsdk-7mq-usecase.md` (from task 7mq — use case diagram)
+**Đầu vào:**
+- `self-explores/context/docs-summary.md` (từ task 2e7 — phân tích docs chính thức)
+- `self-explores/context/code-architecture.md` (từ task d0g — phân tích cấu trúc code)
+- `self-explores/context/learning-resources.md` (từ task fl0 — tài nguyên đã chọn lọc)
+- `self-explores/context/use-case-guide.md` (từ task qw0 — phân tích use case)
+- `self-explores/tasks/claudeagentsdk-554-diagrams.md` (từ task 554 — sơ đồ tuần tự)
+- `self-explores/tasks/claudeagentsdk-7mq-usecase.md` (từ task 7mq — sơ đồ use case)
 
-**Output:**
-- `self-explores/context/claude-agent-sdk-overview.md` — executive summary (<500 words)
-- `self-explores/context/claude-agent-sdk-cheatsheet.md` — quick reference with 10+ operations
-- Updated `self-explores/context/_index.md` — navigation with links to all context files
+**Đầu ra:**
+- `self-explores/context/claude-agent-sdk-overview.md` — tóm tắt tổng quan (<500 từ)
+- `self-explores/context/claude-agent-sdk-cheatsheet.md` — tham chiếu nhanh với 10+ thao tác
+- Cập nhật `self-explores/context/_index.md` — điều hướng với links đến tất cả context files
 
-## 4. Dependencies
+## 4. Phụ thuộc (Dependencies)
 
-- `claudeagentsdk-qw0` (use case guide) — Phase 2 prerequisite
-- `claudeagentsdk-fl0` (learning resources) — Phase 2 prerequisite
-- `claudeagentsdk-554` (sequence diagrams) — Phase 2 prerequisite
-- `claudeagentsdk-7mq` (use case diagram) — Phase 2 prerequisite
-- Note: Phase 1 tasks (2e7, d0g, 3ma) are transitive dependencies via Phase 2
+- `claudeagentsdk-qw0` (hướng dẫn use case) — tiên quyết Phase 2
+- `claudeagentsdk-fl0` (tài nguyên học tập) — tiên quyết Phase 2
+- `claudeagentsdk-554` (sơ đồ tuần tự) — tiên quyết Phase 2
+- `claudeagentsdk-7mq` (sơ đồ use case) — tiên quyết Phase 2
+- Ghi chú: Task Phase 1 (2e7, d0g, 3ma) là phụ thuộc bắc cầu qua Phase 2
 
-## 5. Flow
+## 5. Luồng xử lý (Flow)
 
-### Step 1: Read All Phase 1 + Phase 2 Output Files (~5 min)
+### Bước 1: Đọc tất cả đầu ra Phase 1 + Phase 2 (~5 phút)
 
-Read each input file and extract the key takeaways:
+Đọc mỗi file đầu vào và trích xuất takeaways chính:
 
-From `docs-summary.md`: Official API surface, documented patterns, version-specific features
-From `code-architecture.md`: Internal layers, design decisions, error hierarchy, key classes
-From `learning-resources.md`: Best external resources, community patterns
-From `use-case-guide.md`: Categorized use cases, actor mapping, when-to-use guidance
-From `554-diagrams.md`: Visual flow references (link to, don't duplicate)
-From `7mq-usecase.md`: Capability overview (link to, don't duplicate)
+Từ `docs-summary.md`: Bề mặt API chính thức, mẫu đã tài liệu, tính năng theo phiên bản
+Từ `code-architecture.md`: Các tầng nội bộ, quyết định thiết kế, cây lỗi, class chính
+Từ `learning-resources.md`: Tài nguyên bên ngoài tốt nhất, mẫu cộng đồng
+Từ `use-case-guide.md`: Use case đã phân loại, ánh xạ actor, hướng dẫn khi nào dùng gì
+Từ `554-diagrams.md`: Tham chiếu luồng trực quan (link đến, không sao chép)
+Từ `7mq-usecase.md`: Tổng quan khả năng (link đến, không sao chép)
 
-**Verify:** All input files exist and have been read. Note any missing files for gap reporting.
+**Kiểm tra:** Tất cả file đầu vào tồn tại và đã đọc. Ghi nhận file nào thiếu để báo cáo.
 
-### Step 2: Write Executive Summary — Synthesize, Don't Copy (~10 min)
+### Bước 2: Viết tóm tắt tổng quan — Tổng hợp, không sao chép (~10 phút)
 
-Write `claude-agent-sdk-overview.md` with this structure:
+Viết `claude-agent-sdk-overview.md` với cấu trúc:
 
 ```
-# claude-agent-sdk Python SDK — Executive Summary
+# claude-agent-sdk Python SDK — Tóm tắt tổng quan
 
-## What It Is
-(2-3 sentences: SDK wraps CLI, async-only, Python 3.10+)
+## Nó là gì
+(2-3 câu: SDK bọc CLI, chỉ async, Python 3.10+)
 
-## Architecture at a Glance
-(3-4 sentences: two entry points, transport layer, streaming protocol)
-(Link to sequence diagrams for details)
+## Kiến trúc tổng quát
+(3-4 câu: hai điểm vào, tầng transport, giao thức streaming)
+(Link đến sơ đồ tuần tự cho chi tiết)
 
-## Key Design Decisions
-(Bullet list of 4-5 decisions with WHY, not just WHAT)
-- Always streaming internally — enables agents and large configs
-- Control protocol over stdin/stdout — decouples SDK from CLI internals
-- In-process MCP servers — avoids subprocess overhead for custom tools
-- Hooks as async callbacks — non-blocking, composable safety controls
-- anyio for async — framework-agnostic (works with asyncio and trio)
+## Quyết định thiết kế chính
+(Danh sách 4-5 quyết định với TẠI SAO, không chỉ CÁI GÌ)
+- Luôn streaming nội bộ — cho phép agents và configs lớn
+- Giao thức điều khiển qua stdin/stdout — tách rời SDK khỏi nội bộ CLI
+- MCP servers in-process — tránh overhead subprocess cho custom tools
+- Hooks dạng async callbacks — kiểm soát an toàn không chặn, kết hợp được
+- anyio cho async — không phụ thuộc framework (hoạt động với asyncio và trio)
 
-## When to Use What
-(Decision matrix: query() vs ClaudeSDKClient)
-| Need | Use | Why |
+## Khi nào dùng gì
+(Ma trận quyết định: query() vs ClaudeSDKClient)
+| Nhu cầu | Dùng | Tại sao |
 |------|-----|-----|
-| One-shot question | query() | Simpler, auto-teardown |
-| Multi-turn conversation | ClaudeSDKClient | Maintains context |
-| Custom tools | ClaudeSDKClient + MCP | Needs session lifecycle |
-| Safety controls | Either + Hooks | Hooks work with both |
+| Hỏi đáp một lần | query() | Đơn giản hơn, tự dọn dẹp |
+| Hội thoại đa lượt | ClaudeSDKClient | Duy trì ngữ cảnh |
+| Custom tools | ClaudeSDKClient + MCP | Cần vòng đời session |
+| Kiểm soát an toàn | Cả hai + Hooks | Hooks hoạt động với cả hai |
 
-## Recommendations
-(3-4 actionable recommendations for a team adopting the SDK)
+## Khuyến nghị
+(3-4 khuyến nghị hành động cho team áp dụng SDK)
 
-## Further Reading
-(Links to diagrams, use case guide, Feynman learning)
+## Đọc thêm
+(Links đến sơ đồ, hướng dẫn use case, Feynman learning)
 ```
 
-Hard limit: <500 words. Every sentence must add value. No filler.
+Giới hạn cứng: <500 từ. Mỗi câu phải bổ sung giá trị. Không rỗng ruột.
 
-**Verify:** Word count < 500. Contains architecture overview, design decisions, and actionable recommendations. Not a copy-paste from any single source.
+**Kiểm tra:** Số từ < 500. Chứa tổng quan kiến trúc, quyết định thiết kế, và khuyến nghị hành động. Không copy-paste từ bất kỳ nguồn đơn lẻ nào.
 
-### Step 3: Write Cheatsheet with 10+ Operations (~10 min)
+### Bước 3: Viết Cheatsheet với 10+ thao tác (~10 phút)
 
-Write `claude-agent-sdk-cheatsheet.md` with this structure:
+Viết `claude-agent-sdk-cheatsheet.md` với cấu trúc:
 
 ```
 # claude-agent-sdk Cheatsheet
 
-## Setup
-- Install: `pip install claude-agent-sdk`
-- Required: Python 3.10+, Claude Code CLI installed
+## Thiết lập
+- Cài đặt: `pip install claude-agent-sdk`
+- Yêu cầu: Python 3.10+, Claude Code CLI đã cài
 
-## Quick Operations
+## Các thao tác nhanh
 
-### 1. Simple One-Shot Query
-(3-5 lines of runnable Python)
+### 1. Truy vấn một lần đơn giản
+(3-5 dòng Python chạy được)
 
-### 2. Streaming with Type Checking
-(Show how to filter TextBlock vs ToolUseBlock)
+### 2. Streaming với kiểm tra kiểu
+(Hiện cách lọc TextBlock vs ToolUseBlock)
 
-### 3. Interactive Multi-Turn Session
-(async with ClaudeSDKClient pattern)
+### 3. Session tương tác đa lượt
+(Mẫu async with ClaudeSDKClient)
 
 ### 4. Custom MCP Tool
-(@tool decorator + create_sdk_mcp_server)
+(Decorator @tool + create_sdk_mcp_server)
 
-### 5. Pre-Tool Hook (Approve/Block)
-(Hook function + HookMatcher setup)
+### 5. Pre-Tool Hook (Cho phép/Chặn)
+(Hàm hook + thiết lập HookMatcher)
 
-### 6. Post-Tool Hook (Logging)
-(Log every tool use for audit)
+### 6. Post-Tool Hook (Ghi log)
+(Ghi log mọi lần dùng tool cho kiểm toán)
 
-### 7. Connect External MCP Server
-(MCPServerConfig in options)
+### 7. Kết nối MCP Server bên ngoài
+(MCPServerConfig trong options)
 
-### 8. Set Budget/Token Limits
-(max_tokens, budget options)
+### 8. Đặt giới hạn ngân sách/Token
+(Các option max_tokens, budget)
 
-### 9. Permission Mode Control
-(allowlist, permission_mode options)
+### 9. Kiểm soát chế độ phân quyền
+(Các option allowlist, permission_mode)
 
-### 10. Agent with System Prompt
+### 10. Agent với System Prompt
 (system_prompt + tools + streaming)
 
-### 11. Error Handling
-(try/except with ClaudeSDKError hierarchy)
+### 11. Xử lý lỗi
+(try/except với cây ClaudeSDKError)
 
-### 12. Interrupt Mid-Stream
-(client.interrupt() pattern)
+### 12. Interrupt giữa chừng
+(Mẫu client.interrupt())
 ```
 
-Focus on non-obvious patterns. Do NOT duplicate the README's basic example. Each operation should have:
-- 1-line description of WHEN to use it
-- Runnable code snippet (3-8 lines)
-- 1-line gotcha or tip
+Tập trung vào mẫu không hiển nhiên. KHÔNG sao chép ví dụ cơ bản của README. Mỗi thao tác nên có:
+- Mô tả 1 dòng KHI NÀO dùng
+- Code snippet chạy được (3-8 dòng)
+- 1 dòng lưu ý hoặc tip
 
-**Verify:** 10+ operations listed. Each has runnable code. No operation is identical to README basic example.
+**Kiểm tra:** 10+ thao tác được liệt kê. Mỗi thao tác có code chạy được. Không thao tác nào giống hệt ví dụ cơ bản README.
 
-### Step 4: Update _index.md with Navigation Links (~5 min)
+### Bước 4: Cập nhật _index.md với links điều hướng (~5 phút)
 
-Update `self-explores/context/_index.md` to include links to:
-- All Phase 1 output files
-- All Phase 2 output files
-- The new overview and cheatsheet
-- Brief description of each file's purpose
+Cập nhật `self-explores/context/_index.md` bao gồm links đến:
+- Tất cả file đầu ra Phase 1
+- Tất cả file đầu ra Phase 2
+- Tóm tắt và cheatsheet mới
+- Mô tả ngắn mục đích mỗi file
 
-Structure as a table:
+Cấu trúc dạng bảng:
 
 ```
-| File | Phase | Description |
-|------|-------|-------------|
-| docs-summary.md | 1 | Official documentation analysis |
-| code-architecture.md | 1 | Internal code structure |
+| File | Giai đoạn | Mô tả |
+|------|-----------|-------|
+| docs-summary.md | 1 | Phân tích tài liệu chính thức |
+| code-architecture.md | 1 | Cấu trúc code nội bộ |
 | ... | ... | ... |
-| claude-agent-sdk-overview.md | 3 | Executive summary |
-| claude-agent-sdk-cheatsheet.md | 3 | Quick reference |
+| claude-agent-sdk-overview.md | 3 | Tóm tắt tổng quan |
+| claude-agent-sdk-cheatsheet.md | 3 | Tham chiếu nhanh |
 ```
 
-**Verify:** All context files are linked. No broken relative paths. Table renders correctly in Markdown.
+**Kiểm tra:** Tất cả context files được link. Không relative path hỏng. Bảng render đúng trong Markdown.
 
-## 6. Edge Cases & Error Handling
+## 6. Trường hợp biên & Xử lý lỗi
 
-| Case | Trigger | Expected | Recovery |
+| Trường hợp | Điều kiện kích hoạt | Hành vi mong đợi | Cách khôi phục |
 |------|---------|----------|----------|
-| Phase 2 output files incomplete | Tasks 554, 7mq, qw0, or fl0 not finished | Missing input for synthesis | Note gaps explicitly in the summary: "Diagrams pending — see task 554" |
-| Executive summary exceeds 500 words | Too much detail included | Violates acceptance criteria | Ruthlessly cut: remove examples (those go in cheatsheet), shorten sentences, use bullet lists |
-| Cheatsheet operations overlap with README | Basic query example already in README | Redundant content, no added value | Focus cheatsheet on patterns NOT in README: hooks, MCP, error handling, interrupt, multi-turn |
-| Code snippets have syntax errors | Incorrect API usage in cheatsheet | Snippets won't run | Verify each snippet against the SDK's public API types in `types.py` and `__init__.py` |
-| _index.md doesn't exist yet | First time creating navigation | No file to update | Create new `_index.md` from scratch with full navigation table |
+| File đầu ra Phase 2 chưa đầy đủ | Task 554, 7mq, qw0, hoặc fl0 chưa xong | Thiếu đầu vào cho tổng hợp | Ghi rõ phần thiếu trong tóm tắt: "Sơ đồ đang chờ — xem task 554" |
+| Tóm tắt vượt 500 từ | Quá nhiều chi tiết | Vi phạm tiêu chí chấp nhận | Cắt triệt để: bỏ ví dụ (dành cho cheatsheet), rút ngắn câu, dùng danh sách gạch đầu dòng |
+| Thao tác cheatsheet trùng với README | Ví dụ query cơ bản đã có trong README | Nội dung trùng lặp, không thêm giá trị | Tập trung cheatsheet vào mẫu KHÔNG có trong README: hooks, MCP, xử lý lỗi, interrupt, đa lượt |
+| Code snippets có lỗi cú pháp | API usage sai trong cheatsheet | Snippets không chạy được | Xác minh mỗi snippet theo kiểu API công khai SDK trong `types.py` và `__init__.py` |
+| _index.md chưa tồn tại | Lần đầu tạo điều hướng | Không có file để cập nhật | Tạo `_index.md` mới từ đầu với bảng điều hướng đầy đủ |
 
-## 7. Acceptance Criteria
+## 7. Tiêu chí chấp nhận (Acceptance Criteria)
 
-- **Happy 1:** Given all Phase 1 and Phase 2 outputs read, When executive summary is created, Then it is <500 words, covers architecture + key design decisions + use case recommendations, and synthesizes across multiple sources (not copy-paste from one)
-- **Happy 2:** Given cheatsheet is created, Then it has 10+ operations with runnable code snippets, each with a "when to use" description, and a developer can use it as a quick reference without consulting other docs
-- **Negative:** Given some Phase 2 tasks are incomplete, When summary is created, Then it explicitly notes which sections are pending with references to the blocking tasks
+- **Thành công 1:** Khi đọc xong tất cả đầu ra Phase 1 và Phase 2, Khi tạo tóm tắt tổng quan, Thì nó <500 từ, bao phủ kiến trúc + quyết định thiết kế chính + khuyến nghị use case, và tổng hợp từ nhiều nguồn (không copy-paste từ một nguồn)
+- **Thành công 2:** Khi tạo cheatsheet, Thì nó có 10+ thao tác với code snippets chạy được, mỗi thao tác có mô tả "khi nào dùng", và lập trình viên có thể dùng làm tham chiếu nhanh mà không cần xem docs khác
+- **Thất bại:** Khi một số task Phase 2 chưa hoàn thành, Khi tạo tóm tắt, Thì nó ghi rõ phần nào đang chờ với tham chiếu đến task đang chặn
 
-## 8. Technical Notes
+## 8. Ghi chú kỹ thuật
 
-- Word count check: use `wc -w` on the overview file to verify <500 words
-- Code snippet verification: each snippet should use only symbols exported from `claude_agent_sdk.__init__`
-- The cheatsheet is NOT a tutorial — no step-by-step explanations. Just "what + when + code + gotcha"
-- Executive summary target audience: engineering lead evaluating the SDK for team adoption
-- Cheatsheet target audience: developer who has already decided to use the SDK and needs quick patterns
-- Markdown linting: ensure consistent heading levels, no orphan links
+- Kiểm tra số từ: dùng `wc -w` trên file overview để xác minh <500 từ
+- Xác minh code snippet: mỗi snippet chỉ nên dùng symbols được export từ `claude_agent_sdk.__init__`
+- Cheatsheet KHÔNG PHẢI tutorial — không giải thích từng bước. Chỉ "cái gì + khi nào + code + lưu ý"
+- Đối tượng tóm tắt tổng quan: engineering lead đánh giá SDK cho team áp dụng
+- Đối tượng cheatsheet: lập trình viên đã quyết định dùng SDK và cần mẫu nhanh
+- Linting Markdown: đảm bảo heading levels nhất quán, không link lơ lửng
 
-## 9. Risks
+## 9. Rủi ro
 
-- **Risk:** Synthesizing across 6+ input files may produce a summary that is too generic and loses important nuance. **Mitigation:** After writing, review each paragraph and ask "does this add value that none of the source files provide alone?" If not, rewrite.
-- **Risk:** Cheatsheet code snippets may drift from actual API as SDK evolves. **Mitigation:** Note the SDK version (v0.1.48) at the top of the cheatsheet. Verify snippets against current `__init__.py` exports.
-- **Risk:** Some Phase 2 tasks may not be complete when this task runs. **Mitigation:** Design the summary to be modular — sections that depend on incomplete tasks are clearly marked as "pending" with task references, and can be updated later.
+- **Rủi ro:** Tổng hợp từ 6+ file đầu vào có thể tạo tóm tắt quá chung chung và mất sắc thái quan trọng. **Giảm thiểu:** Sau khi viết, rà soát mỗi đoạn và hỏi "đoạn này có thêm giá trị mà không file nguồn nào đơn lẻ cung cấp?" Nếu không, viết lại.
+- **Rủi ro:** Code snippets trong cheatsheet có thể lệch khỏi API thực khi SDK phát triển. **Giảm thiểu:** Ghi phiên bản SDK (v0.1.48) ở đầu cheatsheet. Xác minh snippets theo exports `__init__.py` hiện tại.
+- **Rủi ro:** Một số task Phase 2 có thể chưa hoàn thành khi task này chạy. **Giảm thiểu:** Thiết kế tóm tắt module — phần phụ thuộc task chưa xong được đánh dấu rõ "đang chờ" với tham chiếu task, và có thể cập nhật sau.
 
-## Worklog
+## Nhật ký công việc (Worklog)
 
-*(Chua bat dau)*
+*(Chưa bắt đầu)*

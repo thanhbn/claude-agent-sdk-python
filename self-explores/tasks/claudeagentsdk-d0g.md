@@ -2,193 +2,193 @@
 date: 2026-03-21
 type: task-worklog
 task: claudeagentsdk-d0g
-title: "P1: Map cau truc thu muc & luong code chinh"
-status: open
+title: "P1: Map cấu trúc thư mục & luồng code chính"
+status: completed
 detailed_at: 2026-03-21
 detail_score: ready-for-dev
 tags: [research, architecture, code-flow, p1, discovery]
 ---
 
-# Map cau truc thu muc & luong code chinh — Detailed Design
+# Map cấu trúc thư mục & luồng code chính — Thiết kế chi tiết
 
-## 1. Objective
-Create an annotated directory tree of all 15 src/*.py files and trace 4 main code flows (query, ClaudeSDKClient, hooks, MCP) with step-by-step descriptions including file:class:method references.
+## 1. Mục tiêu
+Tạo cây thư mục có chú thích cho tất cả 15 file src/*.py và truy vết 4 luồng code chính (query, ClaudeSDKClient, hooks, MCP) với mô tả từng bước bao gồm tham chiếu file:class:method.
 
-## 2. Scope
-**In-scope:**
-- Mapping the complete directory tree with annotations for every .py file in `src/`
-- Tracing the `query()` flow: query.py -> InternalClient -> Query -> SubprocessCLITransport
-- Tracing the `ClaudeSDKClient` flow: client.py -> connect -> query/receive_response cycle
-- Tracing the hooks flow: HookMatcher -> Query dispatch -> Python callbacks -> response
-- Tracing the MCP in-process flow: @tool -> create_sdk_mcp_server -> Server -> call_tool
-- Mapping the error hierarchy and type system overview
-- Cross-referencing with Context7 `/anthropics/claude-agent-sdk-python` (51 snippets)
+## 2. Phạm vi
+**Trong phạm vi:**
+- Lập bản đồ cây thư mục đầy đủ với chú thích cho mỗi file .py trong `src/`
+- Truy vết luồng `query()`: query.py -> InternalClient -> Query -> SubprocessCLITransport
+- Truy vết luồng `ClaudeSDKClient`: client.py -> connect -> query/receive_response cycle
+- Truy vết luồng hooks: HookMatcher -> Query dispatch -> Python callbacks -> response
+- Truy vết luồng MCP in-process: @tool -> create_sdk_mcp_server -> Server -> call_tool
+- Lập bản đồ cây lỗi (error hierarchy) và tổng quan hệ thống kiểu (type system)
+- Đối chiếu với Context7 `/anthropics/claude-agent-sdk-python` (51 snippets)
 
-**Out-of-scope:**
-- Reading test files (17 files in tests/)
-- Reading example files (18 files in examples/)
-- Creating diagrams (that is task claudeagentsdk-fl0)
-- Modifying any source code
-- Performance analysis or benchmarking
-- CLI binary internals (only the SDK's interaction with it)
+**Ngoài phạm vi:**
+- Đọc file test (17 file trong tests/)
+- Đọc file ví dụ (18 file trong examples/)
+- Tạo sơ đồ (diagram) (đó là task claudeagentsdk-fl0)
+- Sửa đổi bất kỳ mã nguồn nào
+- Phân tích hoặc đo hiệu năng (benchmarking)
+- Nội bộ CLI binary (chỉ tương tác của SDK với nó)
 
-## 3. Input / Output
-**Input:**
-- 15 .py files in `src/claude_agent_sdk/` and `src/claude_agent_sdk/_internal/`:
-  - Public: `__init__.py`, `query.py`, `client.py`, `types.py`
-  - Internal: `_internal/__init__.py`, `_internal/client.py`, `_internal/query.py`, `_internal/message_parser.py`, `_internal/sessions.py`, `_internal/_errors.py`
+## 3. Đầu vào / Đầu ra
+**Đầu vào:**
+- 15 file .py trong `src/claude_agent_sdk/` và `src/claude_agent_sdk/_internal/`:
+  - Công khai: `__init__.py`, `query.py`, `client.py`, `types.py`
+  - Nội bộ: `_internal/__init__.py`, `_internal/client.py`, `_internal/query.py`, `_internal/message_parser.py`, `_internal/sessions.py`, `_internal/_errors.py`
   - Transport: `_internal/transport/__init__.py`, `_internal/transport/subprocess_cli.py`
-  - (remaining files to be discovered during Step 1)
+  - (các file còn lại sẽ được phát hiện trong Bước 1)
 - Context7 MCP: `/anthropics/claude-agent-sdk-python` (51 snippets)
 
-**Output:**
-- `self-explores/context/code-architecture.md` -- Single consolidated architecture document containing:
-  1. Annotated directory tree (every .py file with 1-line description)
-  2. query() flow (5+ steps)
-  3. ClaudeSDKClient flow (5+ steps)
-  4. Hooks flow (5+ steps)
-  5. MCP in-process flow (5+ steps)
-  6. Error hierarchy
-  7. Type system overview
+**Đầu ra:**
+- `self-explores/context/code-architecture.md` -- Tài liệu kiến trúc hợp nhất chứa:
+  1. Cây thư mục có chú thích (mỗi file .py kèm mô tả 1 dòng)
+  2. Luồng query() (5+ bước)
+  3. Luồng ClaudeSDKClient (5+ bước)
+  4. Luồng Hooks (5+ bước)
+  5. Luồng MCP in-process (5+ bước)
+  6. Cây lỗi (Error hierarchy)
+  7. Tổng quan hệ thống kiểu (Type system)
 
-## 4. Dependencies
-- **Task dependencies:** None (this is a P1 starter task, can run in parallel with 3ma and 2e7)
-- **Tool dependencies:**
-  - Read tool -- for reading all 15 source files
-  - Glob tool -- for discovering all .py files in src/
-  - Grep tool -- for tracing call chains and finding method definitions
-  - Context7 MCP (`mcp__context7__resolve-library-id` + `mcp__context7__query-docs`) -- for cross-referencing
-  - Write tool -- for creating output file
-- **Directory:** `self-explores/context/` may need to be created if it does not exist
+## 4. Phụ thuộc (Dependencies)
+- **Phụ thuộc task:** Không có (đây là task P1 khởi đầu, chạy song song với 3ma và 2e7)
+- **Phụ thuộc công cụ:**
+  - Read tool -- đọc tất cả 15 file mã nguồn
+  - Glob tool -- khám phá tất cả file .py trong src/
+  - Grep tool -- truy vết chuỗi gọi hàm và tìm định nghĩa method
+  - Context7 MCP (`mcp__context7__resolve-library-id` + `mcp__context7__query-docs`) -- đối chiếu
+  - Write tool -- tạo file đầu ra
+- **Thư mục:** `self-explores/context/` có thể cần tạo nếu chưa tồn tại
 
-## 5. Flow
+## 5. Luồng xử lý (Flow)
 
-### Step 1: Map directory tree with annotations (~10 min)
-Use Glob tool to find all .py files under `src/`:
+### Bước 1: Lập bản đồ cây thư mục có chú thích (~10 phút)
+Dùng Glob tìm tất cả file .py dưới `src/`:
 ```
 Glob pattern: src/**/*.py
 ```
 
-Then read each file's first 20-30 lines to capture module docstrings and imports. Build an annotated tree like:
+Sau đó đọc 20-30 dòng đầu mỗi file để nắm docstring và imports. Xây dựng cây có chú thích như:
 ```
 src/claude_agent_sdk/
-  __init__.py          -- Public exports, @tool decorator, create_sdk_mcp_server()
-  query.py             -- query() async generator, one-shot entry point
-  client.py            -- ClaudeSDKClient, stateful session manager
-  types.py             -- All public types: Message, ClaudeAgentOptions, hooks, etc.
+  __init__.py          -- Exports công khai, decorator @tool, create_sdk_mcp_server()
+  query.py             -- query() async generator, điểm vào một lần (one-shot)
+  client.py            -- ClaudeSDKClient, quản lý session có trạng thái
+  types.py             -- Tất cả kiểu công khai: Message, ClaudeAgentOptions, hooks, v.v.
   _internal/
-    __init__.py         -- Internal package init
-    client.py           -- InternalClient, used by query() internally
-    query.py            -- Query class, control protocol handler
-    message_parser.py   -- JSON dict -> typed Message objects
-    sessions.py         -- Historical session data reader
-    _errors.py          -- Error hierarchy (ClaudeSDKError tree)
+    __init__.py         -- Khởi tạo package nội bộ
+    client.py           -- InternalClient, dùng bởi query() nội bộ
+    query.py            -- Lớp Query, xử lý giao thức điều khiển (control protocol)
+    message_parser.py   -- JSON dict -> đối tượng Message có kiểu
+    sessions.py         -- Đọc dữ liệu session lịch sử
+    _errors.py          -- Cây lỗi (ClaudeSDKError tree)
     transport/
-      __init__.py       -- Transport package init
-      subprocess_cli.py -- SubprocessCLITransport, CLI process manager
+      __init__.py       -- Khởi tạo package transport
+      subprocess_cli.py -- SubprocessCLITransport, quản lý tiến trình CLI
 ```
 
-**Verify:** Every .py file found by Glob is listed in the tree with a 1-line description. Count matches 15 (or actual count if different).
+**Kiểm tra:** Mỗi file .py tìm được bởi Glob đều được liệt kê trong cây kèm mô tả 1 dòng. Tổng số khớp 15 (hoặc số thực tế nếu khác).
 
-### Step 2: Trace query() flow (~10 min)
-Read these files in order, following the call chain:
+### Bước 2: Truy vết luồng query() (~10 phút)
+Đọc các file theo thứ tự, theo dõi chuỗi gọi hàm:
 
-1. `src/claude_agent_sdk/query.py` -- Find the `query()` function signature, what it creates/calls
-2. `src/claude_agent_sdk/_internal/client.py` -- Find `InternalClient.process_query()`, how it creates transport and Query
-3. `src/claude_agent_sdk/_internal/query.py` -- Find `Query` class, `initialize()` handshake, message streaming loop
-4. `src/claude_agent_sdk/_internal/transport/subprocess_cli.py` -- Find `SubprocessCLITransport`, how it spawns CLI, stdin/stdout pipes
+1. `src/claude_agent_sdk/query.py` -- Tìm chữ ký hàm `query()`, nó tạo/gọi gì
+2. `src/claude_agent_sdk/_internal/client.py` -- Tìm `InternalClient.process_query()`, cách nó tạo transport và Query
+3. `src/claude_agent_sdk/_internal/query.py` -- Tìm lớp `Query`, bắt tay `initialize()`, vòng lặp streaming message
+4. `src/claude_agent_sdk/_internal/transport/subprocess_cli.py` -- Tìm `SubprocessCLITransport`, cách nó sinh tiến trình CLI, pipe stdin/stdout
 
-For each step, document:
-- Method signature (class.method with key params)
-- What it does (1-2 sentences)
-- What it calls next (the handoff)
-- Key data transformations (e.g., ClaudeAgentOptions -> CLI args)
+Với mỗi bước, tài liệu hoá:
+- Chữ ký method (class.method với tham số chính)
+- Nó làm gì (1-2 câu)
+- Nó gọi gì tiếp theo (bàn giao)
+- Các biến đổi dữ liệu chính (VD: ClaudeAgentOptions -> CLI args)
 
-Use Grep to find specific method calls:
+Dùng Grep để tìm các lệnh gọi method cụ thể:
 ```
-Grep: "process_query" in src/
-Grep: "SubprocessCLITransport" in src/
-Grep: "async def initialize" in src/
-```
-
-**Verify:** Flow has 5+ steps, each with file:class:method reference. Follows from public `query()` to subprocess spawn and back through message yield.
-
-### Step 3: Trace ClaudeSDKClient flow (~10 min)
-Read `src/claude_agent_sdk/client.py` thoroughly. Trace:
-
-1. `ClaudeSDKClient.__init__()` -- Construction, options storage
-2. `ClaudeSDKClient.__aenter__()` (or `connect()`) -- Transport creation, initialize handshake
-3. `ClaudeSDKClient.query()` -- Sending a prompt, getting response iterator
-4. `ClaudeSDKClient.receive_response()` -- Multi-turn conversation cycle
-5. `ClaudeSDKClient.interrupt()` -- Interrupting ongoing generation
-6. `ClaudeSDKClient.__aexit__()` -- Cleanup, transport shutdown
-
-Also trace stateful features:
-- `set_permission_mode()` -- Runtime permission changes
-- `set_model()` -- Runtime model switching
-- `add_mcp_server()` / `remove_mcp_server()` -- MCP server management
-
-Use Grep to find control protocol messages:
-```
-Grep: "request_id" in src/
-Grep: "control" in src/_internal/query.py
+Grep: "process_query" trong src/
+Grep: "SubprocessCLITransport" trong src/
+Grep: "async def initialize" trong src/
 ```
 
-**Verify:** Flow has 5+ steps covering lifecycle (init -> connect -> query -> receive -> cleanup). Stateful methods are listed.
+**Kiểm tra:** Luồng có 5+ bước, mỗi bước có tham chiếu file:class:method. Đi từ `query()` công khai đến sinh subprocess và quay lại qua yield message.
 
-### Step 4: Trace hooks flow (~10 min)
-Trace the hooks system end-to-end:
+### Bước 3: Truy vết luồng ClaudeSDKClient (~10 phút)
+Đọc kỹ `src/claude_agent_sdk/client.py`. Truy vết:
 
-1. Find hook type definitions in `types.py` -- PreToolUse, PostToolUse, Stop, etc.
-2. Find hook registration in `client.py` or `query.py` -- How Python callbacks are registered
-3. Find `HookMatcher` or hook dispatch logic in `_internal/query.py` -- How CLI hook callbacks arrive and are matched
-4. Trace callback execution -- How Python async functions are invoked with hook data
-5. Trace response path -- How hook results (allow/deny/modify) are sent back to CLI
+1. `ClaudeSDKClient.__init__()` -- Khởi tạo, lưu trữ options
+2. `ClaudeSDKClient.__aenter__()` (hoặc `connect()`) -- Tạo transport, bắt tay khởi tạo
+3. `ClaudeSDKClient.query()` -- Gửi prompt, nhận iterator phản hồi
+4. `ClaudeSDKClient.receive_response()` -- Chu kỳ hội thoại đa lượt (multi-turn)
+5. `ClaudeSDKClient.interrupt()` -- Ngắt quá trình sinh (generation) đang diễn ra
+6. `ClaudeSDKClient.__aexit__()` -- Dọn dẹp, tắt transport
 
-Pay special attention to:
-- `async_` / `continue_` field name mapping (Python keyword avoidance)
-- Hook event types and their payloads
-- `can_use_tool` callback (tool permission system)
+Cũng truy vết các tính năng có trạng thái:
+- `set_permission_mode()` -- Thay đổi quyền lúc chạy
+- `set_model()` -- Chuyển model lúc chạy
+- `add_mcp_server()` / `remove_mcp_server()` -- Quản lý MCP server
 
-Use Grep:
+Dùng Grep tìm các message giao thức điều khiển:
 ```
-Grep: "hook" in src/ (case insensitive)
-Grep: "PreToolUse\|PostToolUse\|Stop" in src/
-Grep: "can_use_tool" in src/
-```
-
-**Verify:** Flow has 5+ steps from hook definition to CLI response. All hook event types are listed.
-
-### Step 5: Trace MCP in-process flow (~10 min)
-Trace the SDK MCP server system:
-
-1. Find `@tool` decorator in `__init__.py` -- How tools are defined
-2. Find `create_sdk_mcp_server()` in `__init__.py` -- How MCP server is constructed from tool definitions
-3. Find MCP server integration in `_internal/query.py` -- How Query intercepts tool calls destined for SDK MCP servers
-4. Trace tool execution -- How in-process tool calls are dispatched and results returned
-5. Find the MCP protocol messages -- How tool call/result flows through the control protocol
-
-Use Grep:
-```
-Grep: "sdk_mcp\|create_sdk_mcp" in src/
-Grep: "@tool\|tool_map" in src/
-Grep: "call_tool" in src/
+Grep: "request_id" trong src/
+Grep: "control" trong src/_internal/query.py
 ```
 
-**Verify:** Flow has 5+ steps from @tool definition to result return. Clear distinction between SDK MCP (in-process) and external MCP servers.
+**Kiểm tra:** Luồng có 5+ bước bao phủ vòng đời (init -> connect -> query -> receive -> cleanup). Các method có trạng thái được liệt kê.
 
-### Step 6: Cross-reference via Context7 (~5 min)
-Fetch Context7 docs using `mcp__context7__query-docs` with `/anthropics/claude-agent-sdk-python`:
-- Query: "transport layer control protocol initialize handshake message streaming"
-- Compare: Do the traced flows match the official implementation description?
-- Note: Any discrepancies or additional details not found in local code comments
+### Bước 4: Truy vết luồng hooks (~10 phút)
+Truy vết hệ thống hooks từ đầu đến cuối:
 
-**Verify:** At least 1 cross-reference note added to the output document.
+1. Tìm định nghĩa kiểu hook trong `types.py` -- PreToolUse, PostToolUse, Stop, v.v.
+2. Tìm đăng ký hook trong `client.py` hoặc `query.py` -- Cách callback Python được đăng ký
+3. Tìm `HookMatcher` hoặc logic dispatch hook trong `_internal/query.py` -- Cách callback hook từ CLI đến và được khớp
+4. Truy vết thực thi callback -- Cách hàm async Python được gọi với dữ liệu hook
+5. Truy vết đường phản hồi -- Cách kết quả hook (cho phép/từ chối/sửa đổi) được gửi lại CLI
 
-### Step 7: Map errors + types (~5 min)
-Read `src/claude_agent_sdk/_internal/_errors.py` and `src/claude_agent_sdk/types.py`:
+Đặc biệt chú ý:
+- Ánh xạ tên trường `async_` / `continue_` (tránh từ khoá Python)
+- Các kiểu sự kiện hook và payload của chúng
+- Callback `can_use_tool` (hệ thống phân quyền công cụ)
 
-**Errors:** Document the hierarchy:
+Dùng Grep:
+```
+Grep: "hook" trong src/ (không phân biệt hoa thường)
+Grep: "PreToolUse\|PostToolUse\|Stop" trong src/
+Grep: "can_use_tool" trong src/
+```
+
+**Kiểm tra:** Luồng có 5+ bước từ định nghĩa hook đến phản hồi CLI. Tất cả kiểu sự kiện hook được liệt kê.
+
+### Bước 5: Truy vết luồng MCP in-process (~10 phút)
+Truy vết hệ thống SDK MCP server:
+
+1. Tìm decorator `@tool` trong `__init__.py` -- Cách tool được định nghĩa
+2. Tìm `create_sdk_mcp_server()` trong `__init__.py` -- Cách MCP server được xây dựng từ định nghĩa tool
+3. Tìm tích hợp MCP server trong `_internal/query.py` -- Cách Query chặn tool call dành cho SDK MCP server
+4. Truy vết thực thi tool -- Cách tool call in-process được dispatch và kết quả trả về
+5. Tìm các message giao thức MCP -- Cách tool call/result chảy qua giao thức điều khiển
+
+Dùng Grep:
+```
+Grep: "sdk_mcp\|create_sdk_mcp" trong src/
+Grep: "@tool\|tool_map" trong src/
+Grep: "call_tool" trong src/
+```
+
+**Kiểm tra:** Luồng có 5+ bước từ định nghĩa @tool đến trả kết quả. Phân biệt rõ SDK MCP (in-process) và MCP server bên ngoài.
+
+### Bước 6: Đối chiếu qua Context7 (~5 phút)
+Lấy tài liệu Context7 bằng `mcp__context7__query-docs` với `/anthropics/claude-agent-sdk-python`:
+- Truy vấn: "transport layer control protocol initialize handshake message streaming"
+- So sánh: Các luồng đã truy vết có khớp với mô tả triển khai chính thức không?
+- Ghi chú: Bất kỳ khác biệt hoặc chi tiết bổ sung không tìm thấy trong comment code local
+
+**Kiểm tra:** Ít nhất 1 ghi chú đối chiếu được thêm vào tài liệu đầu ra.
+
+### Bước 7: Lập bản đồ lỗi + kiểu (~5 phút)
+Đọc `src/claude_agent_sdk/_internal/_errors.py` và `src/claude_agent_sdk/types.py`:
+
+**Lỗi:** Tài liệu hoá cây lỗi:
 ```
 ClaudeSDKError
   CLIConnectionError
@@ -198,69 +198,69 @@ ClaudeSDKError
   MessageParseError
 ```
 
-**Types:** Document key type categories:
-- Message union type (what variants exist)
-- Content blocks: TextBlock, ToolUseBlock, ToolResultBlock, etc.
-- Configuration: ClaudeAgentOptions (fields summary)
-- Hook types: HookEvent variants, HookCallback signatures
-- MCP types: tool definitions, server config
+**Kiểu:** Tài liệu hoá các nhóm kiểu chính:
+- Kiểu union Message (các biến thể tồn tại)
+- Khối nội dung (content blocks): TextBlock, ToolUseBlock, ToolResultBlock, v.v.
+- Cấu hình: ClaudeAgentOptions (tóm tắt trường)
+- Kiểu hook: biến thể HookEvent, chữ ký HookCallback
+- Kiểu MCP: định nghĩa tool, cấu hình server
 
-**Verify:** Error hierarchy is complete (matches CLAUDE.md description). Types section lists 4+ categories.
+**Kiểm tra:** Cây lỗi đầy đủ (khớp mô tả CLAUDE.md). Phần kiểu liệt kê 4+ nhóm.
 
-## 6. Edge Cases & Error Handling
-| Case | Trigger | Expected | Recovery |
+## 6. Trường hợp biên & Xử lý lỗi
+| Trường hợp | Điều kiện kích hoạt | Hành vi mong đợi | Cách khôi phục |
 |------|---------|----------|----------|
-| _internal/query.py too complex | File is large with many control protocol handlers | Hard to trace all paths in 10 min | Focus on public-facing behavior: initialize, message streaming, hook dispatch. Skip internal retry/error paths |
-| File count differs from 15 | More or fewer .py files than expected | Directory tree annotation count is wrong | Use Glob results as ground truth; update the count in output accordingly |
-| Context7 data conflicts with code | Platform docs describe different behavior than source | Potential confusion about which is correct | Trust the local source code; note discrepancy with "Code says X, Context7 says Y" |
-| Circular imports or complex init | __init__.py re-exports make tracing confusing | Hard to determine actual module boundaries | Follow actual import chains in each file; document re-exports separately |
-| Transport has multiple implementations | More than SubprocessCLITransport exists | Need to trace additional transports | Document all found transport classes; focus detail on SubprocessCLITransport as primary |
-| Context7 MCP unavailable | Network or server issue | Cannot cross-reference | Skip Step 6; add note that cross-referencing was not possible |
+| _internal/query.py quá phức tạp | File lớn với nhiều handler giao thức điều khiển | Khó truy vết tất cả đường dẫn trong 10 phút | Tập trung vào hành vi hướng người dùng: initialize, streaming message, dispatch hook. Bỏ qua đường dẫn retry/error nội bộ |
+| Số file khác 15 | Nhiều hơn hoặc ít hơn file .py so với dự kiến | Tổng chú thích cây thư mục sai | Dùng kết quả Glob làm chuẩn; cập nhật số đếm trong đầu ra tương ứng |
+| Dữ liệu Context7 mâu thuẫn với code | Tài liệu platform mô tả hành vi khác với mã nguồn | Có thể gây nhầm lẫn về cái nào đúng | Tin tưởng mã nguồn local; ghi chú khác biệt với "Code nói X, Context7 nói Y" |
+| Import vòng tròn hoặc init phức tạp | __init__.py re-export làm truy vết khó | Khó xác định ranh giới module thực tế | Theo dõi chuỗi import thực trong mỗi file; tài liệu re-export riêng |
+| Transport có nhiều triển khai | Có nhiều hơn SubprocessCLITransport | Cần truy vết thêm transport | Tài liệu hoá tất cả lớp transport tìm được; tập trung chi tiết vào SubprocessCLITransport là chính |
+| Context7 MCP không khả dụng | Lỗi mạng hoặc server | Không đối chiếu được | Bỏ qua Bước 6; thêm ghi chú rằng không thể đối chiếu |
 
-## 7. Acceptance Criteria
-- **Happy 1:** Given all 15 source files read, When architecture doc created, Then each of the 4 flows (query, client, hooks, MCP) has 5+ steps with accurate file:class:method names
-- **Happy 2:** Given directory tree created, Then every .py file in src/ is listed with a 1-line description and the total count matches Glob results
-- **Happy 3:** Given error hierarchy documented, Then it matches the hierarchy described in CLAUDE.md (ClaudeSDKError -> CLIConnectionError -> CLINotFoundError, plus ProcessError, CLIJSONDecodeError, MessageParseError)
-- **Negative:** Given Context7 returns conflicting information, When documenting a flow, Then local code is treated as authoritative with discrepancy noted explicitly
+## 7. Tiêu chí chấp nhận (Acceptance Criteria)
+- **Thành công 1:** Khi đọc xong tất cả 15 file mã nguồn, Khi tạo tài liệu kiến trúc, Thì mỗi trong 4 luồng (query, client, hooks, MCP) có 5+ bước với tên file:class:method chính xác
+- **Thành công 2:** Khi cây thư mục được tạo, Thì mỗi file .py trong src/ được liệt kê kèm mô tả 1 dòng và tổng số khớp kết quả Glob
+- **Thành công 3:** Khi cây lỗi được tài liệu hoá, Thì nó khớp với cây lỗi mô tả trong CLAUDE.md (ClaudeSDKError -> CLIConnectionError -> CLINotFoundError, cộng ProcessError, CLIJSONDecodeError, MessageParseError)
+- **Thất bại:** Khi Context7 trả thông tin mâu thuẫn, Khi tài liệu hoá một luồng, Thì code local được coi là chính thống kèm ghi chú khác biệt rõ ràng
 
-## 8. Technical Notes
-- The SDK uses anyio for async -- may see `anyio.create_task_group()` patterns in query.py
-- Transport communication is JSON streaming over stdin/stdout with `--input-format stream-json` CLI flag
-- Control protocol uses `request_id` for request/response matching -- look for this in _internal/query.py
-- Python keyword avoidance: `async_` maps to wire `async`, `continue_` maps to wire `continue`
-- The `@tool` decorator is defined in `__init__.py`, not in a separate module
-- `sessions.py` reads from `~/.claude/projects/` -- this is for historical session data, not active session management
-- Context7 has only 51 snippets for the Python SDK source -- limited but useful for high-level verification
+## 8. Ghi chú kỹ thuật
+- SDK dùng anyio cho async -- có thể thấy mẫu `anyio.create_task_group()` trong query.py
+- Giao tiếp transport là JSON streaming qua stdin/stdout với cờ CLI `--input-format stream-json`
+- Giao thức điều khiển dùng `request_id` để khớp request/response -- tìm trong _internal/query.py
+- Tránh từ khoá Python: `async_` ánh xạ thành `async` trên wire, `continue_` ánh xạ thành `continue`
+- Decorator `@tool` được định nghĩa trong `__init__.py`, không phải module riêng
+- `sessions.py` đọc từ `~/.claude/projects/` -- dùng cho dữ liệu session lịch sử, không phải quản lý session đang hoạt động
+- Context7 chỉ có 51 snippets cho Python SDK source -- hạn chế nhưng hữu ích cho xác minh tổng quát
 
-## 9. Risks
-- **Risk:** 60 minutes may be tight for reading 15 files and tracing 4 flows thoroughly. **Mitigation:** Prioritize the 4 flow traces (Steps 2-5) over completeness; directory tree (Step 1) and types (Step 7) can be briefer.
-- **Risk:** _internal/query.py is likely the most complex file with control protocol, hooks, MCP, and message streaming all interleaved. **Mitigation:** Read it multiple times, once per flow trace, focusing on the relevant code paths each time.
-- **Risk:** Some internal patterns may be undocumented and hard to understand from code alone. **Mitigation:** Use Context7 cross-reference and CLAUDE.md architecture notes to fill gaps.
+## 9. Rủi ro
+- **Rủi ro:** 60 phút có thể chật cho việc đọc 15 file và truy vết 4 luồng kỹ lưỡng. **Giảm thiểu:** Ưu tiên 4 luồng truy vết (Bước 2-5) hơn tính đầy đủ; cây thư mục (Bước 1) và kiểu (Bước 7) có thể ngắn gọn hơn.
+- **Rủi ro:** _internal/query.py có lẽ là file phức tạp nhất với giao thức điều khiển, hooks, MCP, và streaming message đan xen nhau. **Giảm thiểu:** Đọc nó nhiều lần, mỗi lần tập trung một luồng truy vết, chú ý đường dẫn code liên quan.
+- **Rủi ro:** Một số mẫu nội bộ có thể không có tài liệu và khó hiểu chỉ từ code. **Giảm thiểu:** Dùng đối chiếu Context7 và ghi chú kiến trúc CLAUDE.md để lấp khoảng trống.
 
-## Worklog
+## Nhật ký công việc (Worklog)
 
-### [21:36] Steps 1-7 — Read all 15 source files + trace flows
+### [21:36] Bước 1-7 — Đọc tất cả 15 file mã nguồn + truy vết luồng
 **Kết quả:**
-- Read: __init__.py, query.py, client.py, _errors.py, types.py (headers)
-- Read: _internal/client.py (full 146 lines), _internal/query.py (350 lines), _internal/message_parser.py, _internal/sessions.py, _internal/session_mutations.py
-- Read: _internal/transport/subprocess_cli.py (100 lines + structure)
+- Đã đọc: __init__.py, query.py, client.py, _errors.py, types.py (headers)
+- Đã đọc: _internal/client.py (đầy đủ 146 dòng), _internal/query.py (350 dòng), _internal/message_parser.py, _internal/sessions.py, _internal/session_mutations.py
+- Đã đọc: _internal/transport/subprocess_cli.py (100 dòng + cấu trúc)
 
-**Flows traced:**
-1. query() → InternalClient → SubprocessCLITransport → Query → initialize → stream → parse → yield (8 steps)
-2. ClaudeSDKClient → connect → query → receive_response → interrupt → cleanup (9 steps)
-3. Hook callback: CLI control_request → Query routes → hook_callbacks dict → user async fn → convert field names → response (7 steps)
-4. MCP: CLI control_request → Query intercepts → _handle_sdk_mcp_request → Server.call_tool → @tool handler → response (7 steps)
+**Các luồng đã truy vết:**
+1. query() → InternalClient → SubprocessCLITransport → Query → initialize → stream → parse → yield (8 bước)
+2. ClaudeSDKClient → connect → query → receive_response → interrupt → cleanup (9 bước)
+3. Hook callback: CLI control_request → Query định tuyến → hook_callbacks dict → hàm async người dùng → chuyển đổi tên trường → response (7 bước)
+4. MCP: CLI control_request → Query chặn → _handle_sdk_mcp_request → Server.call_tool → handler @tool → response (7 bước)
 
-**Key discoveries:**
-- Query._read_messages() is the central router: control_response → pending dict, control_request → handler, regular → stream
-- request_id matching via anyio.Event + pending results dict
-- Hook callbacks registered during initialize() from HookMatcher → callback_id mapping
-- SDK MCP vs external MCP distinguished by config type == "sdk"
+**Phát hiện quan trọng:**
+- Query._read_messages() là bộ định tuyến trung tâm: control_response → pending dict, control_request → handler, regular → stream
+- Khớp request_id qua anyio.Event + pending results dict
+- Hook callbacks được đăng ký trong initialize() từ HookMatcher → callback_id mapping
+- SDK MCP và external MCP được phân biệt bởi config type == "sdk"
 
-**Files tạo:** `self-explores/context/code-architecture.md`
+**File đã tạo:** `self-explores/context/code-architecture.md`
 
-### [21:40] AC Verification
-- [x] 4 flows each with 5+ steps — PASS (8, 9, 7, 7 steps)
-- [x] Every .py file listed with description — PASS (15 files)
-- [x] Error hierarchy documented — PASS (matches CLAUDE.md)
-- [x] Type system overview — PASS (7 categories)
+### [21:40] Kiểm tra tiêu chí chấp nhận
+- [x] 4 luồng mỗi luồng có 5+ bước — ĐẠT (8, 9, 7, 7 bước)
+- [x] Mỗi file .py được liệt kê kèm mô tả — ĐẠT (15 file)
+- [x] Cây lỗi được tài liệu hoá — ĐẠT (khớp CLAUDE.md)
+- [x] Tổng quan hệ thống kiểu — ĐẠT (7 nhóm)

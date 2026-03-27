@@ -2,279 +2,183 @@
 date: 2026-03-21
 type: task-worklog
 task: claudeagentsdk-fl0
-title: "P2: Ve Architecture Diagram (Mermaid graph TD)"
-status: open
+title: "P2: Vẽ Architecture Diagram (Mermaid graph TD)"
+status: completed
 detailed_at: 2026-03-21
 detail_score: ready-for-dev
 tags: [research, diagram, architecture, mermaid, p2, visualization]
 ---
 
-# Ve Architecture Diagram — Detailed Design
+# Vẽ Architecture Diagram — Thiết kế chi tiết
 
-## 1. Objective
-Create Mermaid `graph TD` architecture diagrams showing 4+ layers of the Claude Agent SDK, with data flow arrows and labeled components, renderable on GitHub Markdown.
+## 1. Mục tiêu
+Tạo sơ đồ kiến trúc Mermaid `graph TD` hiển thị 4+ tầng của Claude Agent SDK, với mũi tên luồng dữ liệu và thành phần được gắn nhãn, render được trên GitHub Markdown.
 
-## 2. Scope
-**In-scope:**
-- Main architecture diagram with 5 layers: Public API, Internal, Transport, External, Cross-cutting
-- Data flow arrows showing how prompts flow from user code to CLI and responses flow back
-- Component labels with module names matching actual source files
-- Detail sub-diagrams for complex subsystems if the main diagram becomes too crowded
-- Verification that Mermaid syntax renders correctly on GitHub
+## 2. Phạm vi
+**Trong phạm vi:**
+- Sơ đồ kiến trúc chính với 5 tầng: API công khai, Nội bộ, Transport, Bên ngoài, Xuyên suốt (Cross-cutting)
+- Mũi tên luồng dữ liệu hiện cách prompts chảy từ code user đến CLI và phản hồi chảy ngược lại
+- Nhãn thành phần kèm tên module khớp file mã nguồn thực tế
+- Sub-diagram chi tiết cho hệ thống con phức tạp nếu diagram chính quá chật
+- Xác minh cú pháp Mermaid render đúng trên GitHub
 
-**Out-of-scope:**
-- Sequence diagrams (only architecture/component diagrams)
-- UML class diagrams (too detailed for an overview)
-- Interactive or animated diagrams
-- Draw.io or other non-Mermaid formats
-- Diagrams of test infrastructure or CI/CD pipeline
-- Diagrams of the CLI binary internals (only SDK-to-CLI boundary)
+**Ngoài phạm vi:**
+- Sơ đồ tuần tự (sequence diagram) (chỉ sơ đồ kiến trúc/thành phần)
+- Sơ đồ lớp UML (quá chi tiết cho tổng quan)
+- Diagram tương tác hoặc có animation
+- Format Draw.io hoặc ngoài Mermaid
+- Diagram của hạ tầng test hoặc CI/CD pipeline
+- Diagram nội bộ CLI binary (chỉ ranh giới SDK-CLI)
 
-## 3. Input / Output
-**Input:**
-- `self-explores/context/code-architecture.md` (from task claudeagentsdk-d0g) -- annotated directory tree, 4 traced flows, error hierarchy, type system overview
-- CLAUDE.md architecture section -- for the high-level layer descriptions
+## 3. Đầu vào / Đầu ra
+**Đầu vào:**
+- `self-explores/context/code-architecture.md` (từ task claudeagentsdk-d0g) -- cây thư mục có chú thích, 4 luồng đã truy vết, cây lỗi, tổng quan hệ thống kiểu
+- Phần kiến trúc CLAUDE.md -- cho mô tả tầng cấp cao
 
-**Output:**
-- `self-explores/tasks/claudeagentsdk-fl0-diagrams.md` -- Markdown file containing:
-  1. Main architecture diagram (Mermaid `graph TD`)
-  2. Optional: Hook system detail diagram
-  3. Optional: MCP tool flow detail diagram
-  4. Legend explaining color coding and arrow types
-  5. Brief prose descriptions accompanying each diagram
+**Đầu ra:**
+- `self-explores/tasks/claudeagentsdk-fl0-diagrams.md` -- File Markdown chứa:
+  1. Sơ đồ kiến trúc chính (Mermaid `graph TD`)
+  2. Tuỳ chọn: Sơ đồ chi tiết hệ thống Hook
+  3. Tuỳ chọn: Sơ đồ chi tiết luồng MCP tool
+  4. Chú giải giải thích mã màu và kiểu mũi tên
+  5. Mô tả ngắn đi kèm mỗi diagram
 
-## 4. Dependencies
-- **Task dependencies:**
-  - `claudeagentsdk-d0g` (P1: code architecture) -- REQUIRED. The architecture doc provides the structural knowledge needed to create accurate diagrams. This task cannot start until d0g is complete.
-- **Tool dependencies:**
-  - Read tool -- for reading the code-architecture.md input
-  - Write tool -- for creating the output file
-  - No MCP tools needed (this is a synthesis task, not a research task)
+## 4. Phụ thuộc (Dependencies)
+- **Phụ thuộc task:**
+  - `claudeagentsdk-d0g` (P1: kiến trúc code) -- BẮT BUỘC. Tài liệu kiến trúc cung cấp kiến thức cấu trúc cần thiết cho diagram chính xác. Task này không thể bắt đầu cho đến khi d0g hoàn thành.
+- **Phụ thuộc công cụ:**
+  - Read tool -- đọc code-architecture.md đầu vào
+  - Write tool -- tạo file đầu ra
+  - Không cần MCP tools (đây là task tổng hợp, không phải nghiên cứu)
 
-## 5. Flow
+## 5. Luồng xử lý (Flow)
 
-### Step 1: Design layout -- 5 layers and component inventory (~10 min)
-Read `self-explores/context/code-architecture.md` from task d0g. Extract all components and organize into 5 layers:
+### Bước 1: Thiết kế bố cục -- 5 tầng và kiểm kê thành phần (~10 phút)
+Đọc `self-explores/context/code-architecture.md` từ task d0g. Trích xuất tất cả thành phần và tổ chức thành 5 tầng:
 
-**Layer 1 -- Public API (top, user-facing):**
-- `query()` function (query.py)
-- `ClaudeSDKClient` class (client.py)
-- `@tool` decorator (__init__.py)
+**Tầng 1 -- API công khai (trên cùng, hướng user):**
+- Hàm `query()` (query.py)
+- Lớp `ClaudeSDKClient` (client.py)
+- Decorator `@tool` (__init__.py)
 - `create_sdk_mcp_server()` (__init__.py)
 
-**Layer 2 -- Internal Processing:**
-- `InternalClient` (_internal/client.py) -- used by query() only
-- `Query` (_internal/query.py) -- control protocol handler, message streaming, hook dispatch
-- `MessageParser` (_internal/message_parser.py) -- JSON -> typed Message objects
+**Tầng 2 -- Xử lý nội bộ:**
+- `InternalClient` (_internal/client.py) -- chỉ dùng bởi query()
+- `Query` (_internal/query.py) -- xử lý giao thức điều khiển, streaming message, dispatch hook
+- `MessageParser` (_internal/message_parser.py) -- JSON -> đối tượng Message có kiểu
 
-**Layer 3 -- Transport:**
-- `SubprocessCLITransport` (_internal/transport/subprocess_cli.py) -- subprocess lifecycle, stdin/stdout/stderr pipes, CLI binary discovery
+**Tầng 3 -- Transport:**
+- `SubprocessCLITransport` (_internal/transport/subprocess_cli.py) -- vòng đời subprocess, pipe stdin/stdout/stderr, phát hiện CLI binary
 
-**Layer 4 -- External (bottom, outside SDK):**
-- Claude Code CLI process (subprocess)
-- External MCP Servers (separate processes)
+**Tầng 4 -- Bên ngoài (dưới cùng, ngoài SDK):**
+- Tiến trình Claude Code CLI (subprocess)
+- MCP Server bên ngoài (tiến trình riêng)
 
-**Layer 5 -- Cross-cutting (side panel):**
+**Tầng 5 -- Xuyên suốt (bảng bên):**
 - Types (types.py) -- Message, ClaudeAgentOptions, content blocks
-- Errors (_errors.py) -- ClaudeSDKError hierarchy
-- Sessions (sessions.py) -- historical session reader
+- Errors (_errors.py) -- Cây lỗi ClaudeSDKError
+- Sessions (sessions.py) -- đọc session lịch sử
 
-Plan the visual layout:
-- Top-to-bottom flow for the main request/response path
-- Left side: query() path
-- Right side: ClaudeSDKClient path
-- Both converge at Query/Transport layers
-- Cross-cutting types on the right margin
-- Arrows: solid for data flow, dashed for configuration/type usage
+Lập kế hoạch bố cục trực quan:
+- Luồng trên-xuống-dưới cho đường request/response chính
+- Bên trái: đường query()
+- Bên phải: đường ClaudeSDKClient
+- Cả hai hội tụ tại tầng Query/Transport
+- Types xuyên suốt ở lề phải
+- Mũi tên: liền cho luồng dữ liệu, nét đứt cho cấu hình/sử dụng kiểu
 
-**Verify:** All components from code-architecture.md are placed in exactly one layer. No component is missing.
+**Kiểm tra:** Tất cả thành phần từ code-architecture.md được đặt vào đúng một tầng. Không thành phần nào bị thiếu.
 
-### Step 2: Write main architecture diagram (~15 min)
-Write the Mermaid `graph TD` code. Design principles:
-- Use subgraphs for each layer with descriptive labels
-- Color-code nodes: green for public API, blue for internal, orange for transport, gray for external
-- Label arrows with data types (e.g., "ClaudeAgentOptions", "JSON messages", "Message objects")
-- Keep node names short but recognizable (e.g., `QF[query&lpar;&rpar;]`, `CSC[ClaudeSDKClient]`)
+### Bước 2: Viết sơ đồ kiến trúc chính (~15 phút)
+Viết code Mermaid `graph TD`. Nguyên tắc thiết kế:
+- Dùng subgraph cho mỗi tầng kèm nhãn mô tả
+- Mã màu node: xanh lá cho API công khai, xanh dương cho nội bộ, cam cho transport, xám cho bên ngoài
+- Gắn nhãn mũi tên với kiểu dữ liệu (VD: "ClaudeAgentOptions", "JSON messages", "Message objects")
+- Giữ tên node ngắn nhưng nhận biết được (VD: `QF[query&lpar;&rpar;]`, `CSC[ClaudeSDKClient]`)
 
-Draft structure:
-```mermaid
-graph TD
-    subgraph "Public API Layer"
-        QF["query()"]
-        CSC["ClaudeSDKClient"]
-        TOOL["@tool decorator"]
-        CMCP["create_sdk_mcp_server()"]
-    end
+**Kiểm tra:** Code Mermaid hợp lệ cú pháp (không có ngoặc chưa đóng, cú pháp mũi tên đúng). Tất cả 5 tầng được đại diện. Luồng dữ liệu hai chiều (request xuống, response lên).
 
-    subgraph "Internal Processing Layer"
-        IC["InternalClient"]
-        Q["Query"]
-        MP["MessageParser"]
-    end
+### Bước 3: Viết diagram chi tiết nếu cần (~10 phút)
+Nếu diagram chính có hơn ~25 node và trở nên khó đọc, tách thành sub-diagram tập trung:
 
-    subgraph "Transport Layer"
-        SCT["SubprocessCLITransport"]
-    end
+**Sub-diagram A: Luồng hệ thống Hook**
+Hiện: kiểu sự kiện PreToolUse, PostToolUse, Stop và chữ ký callback.
 
-    subgraph "External"
-        CLI["Claude Code CLI"]
-        EMCP["External MCP Servers"]
-    end
+**Sub-diagram B: Luồng MCP Tool In-Process**
+Hiện: Phân biệt SDK MCP (in-process) và MCP bên ngoài (subprocess).
 
-    subgraph "Cross-cutting"
-        TYPES["types.py"]
-        ERRORS["_errors.py"]
-        SESS["sessions.py"]
-    end
+**Sub-diagram C: Cây lỗi (Error Hierarchy)**
+Sơ đồ cây đơn giản.
 
-    QF -->|"options"| IC
-    CSC -->|"connect/query"| Q
-    IC -->|"process_query"| Q
-    TOOL --> CMCP
-    CMCP -->|"sdk mcp server"| Q
-    Q -->|"initialize + stream"| SCT
-    Q -->|"parse"| MP
-    SCT -->|"stdin JSON"| CLI
-    CLI -->|"stdout JSON"| SCT
-    CLI -.->|"MCP protocol"| EMCP
-    MP -->|"Message objects"| QF
-    MP -->|"Message objects"| CSC
-```
+Chỉ tạo sub-diagram nào thêm sự rõ ràng vượt ngoài diagram chính. Nếu diagram chính đủ, bỏ qua bước này.
 
-Refine: adjust layout, add style classes for colors, ensure no overlapping labels.
+**Kiểm tra:** Mỗi sub-diagram có tiêu đề rõ và giải thích 1-2 câu. Cú pháp Mermaid hợp lệ.
 
-Use Mermaid style definitions:
-```
-classDef public fill:#d4edda,stroke:#28a745
-classDef internal fill:#cce5ff,stroke:#007bff
-classDef transport fill:#fff3cd,stroke:#ffc107
-classDef external fill:#e2e3e5,stroke:#6c757d
-classDef crosscut fill:#f8d7da,stroke:#dc3545
-```
+### Bước 4: Xác minh render trên GitHub Markdown (~5 phút)
+Rà soát toàn bộ code Mermaid cho các vấn đề cú pháp phổ biến:
+- Dấu ngoặc trong nhãn node phải escape: `&lpar;` và `&rpar;` hoặc dùng ngoặc vuông
+- Dấu ngoặc kép quanh nhãn có ký tự đặc biệt
+- Tiêu đề subgraph trong dấu ngoặc kép
+- Nhãn mũi tên dạng `|"nhãn"|`
+- Không trùng node ID
+- Định nghĩa style class sau định nghĩa graph
 
-**Verify:** Mermaid code is syntactically valid (no unclosed brackets, proper arrow syntax). All 5 layers are represented. Data flow is bidirectional (request down, response up).
+Thêm prose xung quanh file markdown:
+- Giới thiệu ngắn giải thích diagram hiện gì
+- Chú giải cho màu sắc và kiểu mũi tên
+- Ghi chú cách đọc diagram (trên = code user, dưới = tiến trình CLI)
 
-### Step 3: Write detail diagrams if needed (~10 min)
-If the main diagram has more than ~25 nodes and becomes hard to read, split into focused sub-diagrams:
+**Kiểm tra:** Mở file và kiểm tra trực quan các khối Mermaid cho lỗi cú pháp. Xác nhận tất cả tầng được gắn nhãn. Xác nhận mũi tên có nhãn hướng.
 
-**Sub-diagram A: Hook System Flow**
-```
-Hook Definition (types.py) --> HookMatcher (query.py) --> CLI sends hook callback
---> Query dispatches to Python async function --> Hook result --> CLI receives response
-```
-Show: PreToolUse, PostToolUse, Stop event types and their callback signatures.
-
-**Sub-diagram B: MCP In-Process Tool Flow**
-```
-@tool defines function --> create_sdk_mcp_server() builds Server
---> Query intercepts tool_use for SDK tools --> call_tool() in-process
---> Result sent back to CLI via control protocol
-```
-Show: Distinction between SDK MCP (in-process) and external MCP (subprocess).
-
-**Sub-diagram C: Error Hierarchy**
-Simple tree diagram:
-```
-ClaudeSDKError
-  |- CLIConnectionError
-  |    |- CLINotFoundError
-  |- ProcessError
-  |- CLIJSONDecodeError
-  |- MessageParseError
-```
-
-Only create sub-diagrams that add clarity beyond the main diagram. If the main diagram is sufficient, skip this step.
-
-**Verify:** Each sub-diagram has a clear title and 1-2 sentence explanation. Mermaid syntax is valid.
-
-### Step 4: Verify renders on GitHub Markdown (~5 min)
-Review the complete Mermaid code for common syntax issues:
-- Parentheses in node labels must be escaped: `&lpar;` and `&rpar;` or use square brackets
-- Quotes around labels with special characters
-- Subgraph titles in quotes
-- Arrow labels in `|"label"|` format
-- No conflicting node IDs
-- Style class definitions after the graph definition
-
-Add surrounding prose to the markdown file:
-- Brief introduction explaining what the diagram shows
-- Legend for colors and arrow types
-- Notes on how to read the diagram (top = user code, bottom = CLI process)
-
-Write the final file with proper markdown structure:
-```markdown
-# Claude Agent SDK -- Architecture Diagrams
-
-## Main Architecture
-
-[prose description]
-
-```mermaid
-[main diagram]
-```
-
-## Detail: Hook System (optional)
-
-[prose description]
-
-```mermaid
-[hook diagram]
-```
-
-...
-```
-
-**Verify:** Open the file and visually inspect Mermaid blocks for syntax errors. Confirm all layers are labeled. Confirm arrows have direction labels.
-
-## 6. Edge Cases & Error Handling
-| Case | Trigger | Expected | Recovery |
+## 6. Trường hợp biên & Xử lý lỗi
+| Trường hợp | Điều kiện kích hoạt | Hành vi mong đợi | Cách khôi phục |
 |------|---------|----------|----------|
-| Main diagram too complex | More than 25-30 nodes from architecture doc | Diagram becomes unreadable when rendered | Split into main overview (key components only) + detail sub-diagrams for each subsystem |
-| Mermaid syntax errors | Special characters in labels, unclosed brackets | Diagram fails to render on GitHub | Escape special characters; use simple labels without parentheses; test with Mermaid Live Editor mentally |
-| Labels overlap when rendered | Long component names crowd the diagram | Poor visual clarity | Shorten names (e.g., "SubprocessCLITransport" -> "CLITransport"); use abbreviations with legend |
-| code-architecture.md not available | Task d0g not complete yet | Missing input data | Cannot proceed -- this task has a hard dependency on d0g. Wait or use CLAUDE.md architecture section as minimal fallback |
-| Architecture has more layers than expected | Code reveals additional abstraction layers | 5-layer model insufficient | Add layers to the model; diagram should reflect reality, not a preconceived structure |
-| Mermaid version incompatibility | GitHub uses older Mermaid version | Advanced syntax features not supported | Stick to basic `graph TD` syntax; avoid flowchart-v2 or experimental features |
+| Diagram chính quá phức tạp | Hơn 25-30 node từ tài liệu kiến trúc | Diagram không đọc được khi render | Tách thành tổng quan chính (chỉ thành phần chính) + sub-diagram chi tiết cho mỗi hệ thống con |
+| Lỗi cú pháp Mermaid | Ký tự đặc biệt trong nhãn, ngoặc chưa đóng | Diagram không render trên GitHub | Escape ký tự đặc biệt; dùng nhãn đơn giản không dấu ngoặc; test bằng Mermaid Live Editor |
+| Nhãn chồng chéo khi render | Tên thành phần dài chật diagram | Trực quan kém | Rút ngắn tên (VD: "SubprocessCLITransport" -> "CLITransport"); dùng viết tắt kèm chú giải |
+| code-architecture.md chưa có | Task d0g chưa hoàn thành | Thiếu dữ liệu đầu vào | Không thể tiến hành — task này phụ thuộc cứng vào d0g. Chờ hoặc dùng phần kiến trúc CLAUDE.md làm fallback tối thiểu |
+| Kiến trúc có nhiều tầng hơn dự kiến | Code tiết lộ thêm tầng trừu tượng | Mô hình 5 tầng không đủ | Thêm tầng vào mô hình; diagram phải phản ánh thực tế, không phải cấu trúc dự định |
+| Không tương thích phiên bản Mermaid | GitHub dùng Mermaid phiên bản cũ | Tính năng cú pháp nâng cao không hỗ trợ | Dùng cú pháp `graph TD` cơ bản; tránh flowchart-v2 hoặc tính năng thử nghiệm |
 
-## 7. Acceptance Criteria
-- **Happy 1:** Given code-architecture.md is available from task d0g, When main diagram is created, Then it renders on GitHub Markdown with 4+ layers, data flow arrows between layers, and all major components labeled with their source file names
-- **Happy 2:** Given the diagram is viewed by a developer unfamiliar with the codebase, When they read it, Then they can identify: the two entry points (query/ClaudeSDKClient), the internal processing layer, the transport-to-CLI boundary, and the cross-cutting concerns -- without reading source code
-- **Negative:** Given the main diagram exceeds 25 nodes, When readability is impacted, Then the diagram is split into a high-level overview plus 1-2 detail sub-diagrams, each independently renderable
+## 7. Tiêu chí chấp nhận (Acceptance Criteria)
+- **Thành công 1:** Khi có code-architecture.md từ task d0g, Khi tạo diagram chính, Thì nó render trên GitHub Markdown với 4+ tầng, mũi tên luồng dữ liệu giữa các tầng, và tất cả thành phần chính được gắn nhãn kèm tên file mã nguồn
+- **Thành công 2:** Khi lập trình viên chưa quen codebase xem diagram, Khi họ đọc nó, Thì họ có thể xác định: hai điểm vào (query/ClaudeSDKClient), tầng xử lý nội bộ, ranh giới transport-CLI, và các mối quan tâm xuyên suốt — mà không đọc mã nguồn
+- **Thất bại:** Khi diagram chính vượt 25 node, Khi khả năng đọc bị ảnh hưởng, Thì diagram được tách thành tổng quan cấp cao cộng 1-2 sub-diagram chi tiết, mỗi cái render độc lập
 
-## 8. Technical Notes
-- **Mermaid dialect:** Use `graph TD` (top-down). Do NOT use C4 diagrams (limited GitHub support) or `flowchart` keyword (use `graph` for maximum compatibility)
-- **Color coding via classDef:**
-  - Green (`#d4edda`) -- Public API layer
-  - Blue (`#cce5ff`) -- Internal processing layer
-  - Yellow/Orange (`#fff3cd`) -- Transport layer
-  - Gray (`#e2e3e5`) -- External processes
-  - Red/Pink (`#f8d7da`) -- Cross-cutting concerns
-- **Node ID conventions:** Use short uppercase abbreviations (QF, CSC, IC, Q, MP, SCT, CLI)
-- **Arrow types:** `-->` for data flow, `-.->` for optional/config relationships, `==>` for bidirectional heavy traffic
-- **GitHub Mermaid rendering:** Wrap in triple-backtick blocks with `mermaid` language identifier
-- **Special characters:** Escape `()` in labels with `&lpar;` `&rpar;` or avoid them (use `["query function"]` instead of `["query()"]`)
+## 8. Ghi chú kỹ thuật
+- **Phương ngữ Mermaid:** Dùng `graph TD` (trên-xuống). KHÔNG dùng C4 diagrams (hỗ trợ GitHub hạn chế) hoặc từ khoá `flowchart` (dùng `graph` cho tương thích tối đa)
+- **Mã màu qua classDef:**
+  - Xanh lá (`#d4edda`) -- Tầng API công khai
+  - Xanh dương (`#cce5ff`) -- Tầng xử lý nội bộ
+  - Vàng/Cam (`#fff3cd`) -- Tầng Transport
+  - Xám (`#e2e3e5`) -- Tiến trình bên ngoài
+  - Đỏ/Hồng (`#f8d7da`) -- Mối quan tâm xuyên suốt
+- **Quy ước node ID:** Dùng viết tắt in hoa ngắn (QF, CSC, IC, Q, MP, SCT, CLI)
+- **Kiểu mũi tên:** `-->` cho luồng dữ liệu, `-.->` cho quan hệ tuỳ chọn/cấu hình, `==>` cho lưu lượng hai chiều nặng
+- **Render Mermaid trên GitHub:** Bọc trong khối triple-backtick với identifier ngôn ngữ `mermaid`
+- **Ký tự đặc biệt:** Escape `()` trong nhãn bằng `&lpar;` `&rpar;` hoặc tránh chúng (dùng `["hàm query"]` thay vì `["query()"]`)
 
-## 9. Risks
-- **Risk:** Mermaid rendering varies between GitHub, VS Code preview, and other Markdown renderers. **Mitigation:** Use only the most basic `graph TD` syntax; avoid advanced features. Test mentally against Mermaid spec.
-- **Risk:** Architecture may be more nuanced than a single diagram can capture. **Mitigation:** The main diagram shows the "happy path" structure; sub-diagrams handle the complexity of hooks and MCP systems.
-- **Risk:** Diagram may become outdated as SDK evolves. **Mitigation:** Include the SDK version (v0.1.48) and date in the diagram file header; note that diagrams reflect code as of task completion date.
+## 9. Rủi ro
+- **Rủi ro:** Render Mermaid khác nhau giữa GitHub, VS Code preview, và renderer Markdown khác. **Giảm thiểu:** Chỉ dùng cú pháp `graph TD` cơ bản nhất; tránh tính năng nâng cao. Test bằng cách đối chiếu với spec Mermaid.
+- **Rủi ro:** Kiến trúc có thể có nhiều sắc thái hơn một diagram đơn lẻ thể hiện được. **Giảm thiểu:** Diagram chính hiện cấu trúc "happy path"; sub-diagram xử lý độ phức tạp của hệ thống hooks và MCP.
+- **Rủi ro:** Diagram có thể lỗi thời khi SDK phát triển. **Giảm thiểu:** Ghi phiên bản SDK (v0.1.48) và ngày trong header file diagram; ghi chú rằng diagram phản ánh code tại ngày hoàn thành task.
 
-## Worklog
+## Nhật ký công việc (Worklog)
 
-### [10:20] Bat dau
-- Doc code-architecture.md + source code da co trong context tu task truoc
+### [10:20] Bắt đầu
+- Đọc code-architecture.md + mã nguồn đã có trong context từ task trước
 
-### [10:35] Hoan thanh — 6 diagrams
-**Ket qua:**
-- Tao file `claudeagentsdk-fl0-diagrams.md` voi 6 Mermaid diagrams
+### [10:35] Hoàn thành — 6 diagrams
+**Kết quả:**
+- Tạo file `claudeagentsdk-fl0-diagrams.md` với 6 sơ đồ Mermaid
 
-**Diagrams da ve:**
-1. **Main Architecture** — graph TD, 5 layers (Public/Internal/Transport/External/Cross-cutting), color-coded, 13 nodes, data flow arrows co labels
-2. **Control Protocol Message Routing** — Query._read_messages() routing logic: control_response/control_request/regular → 3 handlers
-3. **Hook System Architecture** — Registration (initialize) → Trigger (CLI) → Dispatch (Query) → Response flow
-4. **SDK MCP vs External MCP** — Side-by-side comparison: in-process vs subprocess
-5. **Error Hierarchy** — Tree: ClaudeSDKError → 5 subclasses
-6. **Component Inventory** — Table tong hop 11 components voi file, lines, layer, role
+**Diagrams đã vẽ:**
+1. **Kiến trúc chính** — graph TD, 5 tầng (Public/Internal/Transport/External/Cross-cutting), mã màu, 13 node, mũi tên luồng dữ liệu có nhãn
+2. **Định tuyến message giao thức điều khiển** — Logic định tuyến Query._read_messages(): control_response/control_request/regular → 3 handler
+3. **Kiến trúc hệ thống Hook** — Đăng ký (initialize) → Kích hoạt (CLI) → Dispatch (Query) → Luồng phản hồi
+4. **SDK MCP vs External MCP** — So sánh song song: in-process vs subprocess
+5. **Cây lỗi (Error Hierarchy)** — Cây: ClaudeSDKError → 5 lớp con
+6. **Kiểm kê thành phần** — Bảng tổng hợp 11 thành phần với file, dòng, tầng, vai trò
 
-**Files tao:**
+**File đã tạo:**
 - self-explores/tasks/claudeagentsdk-fl0-diagrams.md
