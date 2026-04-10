@@ -71,7 +71,7 @@ User → query() → InternalClient.process_query()
     → yield Message objects
   → Transport.disconnect()
 ```
-Key files: `src/claude_agent_sdk/query.py` (123 LOC), `src/claude_agent_sdk/_internal/client.py` (145 LOC), `src/claude_agent_sdk/_internal/query.py` (678 LOC)
+Key files: [`query.py`](../../src/claude_agent_sdk/_internal/query.py) (123 LOC), [`client.py`](../../src/claude_agent_sdk/_internal/client.py) (145 LOC), [`query.py`](../../src/claude_agent_sdk/_internal/query.py) (678 LOC)
 
 **Verify:** Diagram covers complete lifecycle from user call to message return
 
@@ -90,7 +90,7 @@ User → client.send_message(follow_up)
 User → ClaudeSDKClient.__aexit__()
   → cleanup
 ```
-Key files: `src/claude_agent_sdk/client.py` (498 LOC)
+Key files: [`client.py`](../../src/claude_agent_sdk/_internal/client.py) (498 LOC)
 
 **Verify:** Diagram shows multi-turn capability + interrupt flow
 

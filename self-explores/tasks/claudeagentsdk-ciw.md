@@ -54,7 +54,7 @@ Read `self-explores/tasks/claudeagentsdk-3ht.md` → identify key design decisio
 3. **History:** Check `git log --all --oneline -- src/claude_agent_sdk/_internal/transport/` for evolution. Likely inherited from TS SDK.
 4. **Industry ref:** LSP (Language Server Protocol) — same stdin/stdout JSON streaming. Docker CLI wrappers. MCP protocol itself.
 
-Read: `src/claude_agent_sdk/_internal/transport/subprocess_cli.py` — look for `stream-json` flag, command building.
+Read: [`subprocess_cli.py`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py) — look for `stream-json` flag, command building.
 **Verify:** All 4 points filled with code evidence
 
 ### Step 3: DEEP — Control Protocol request/response (~15 phút)
@@ -65,7 +65,7 @@ Read: `src/claude_agent_sdk/_internal/transport/subprocess_cli.py` — look for 
 3. **History:** Check query.py for request_id usage patterns. Count distinct request types.
 4. **Industry ref:** JSON-RPC 2.0 (id field), MCP protocol (request/response), HTTP/2 stream multiplexing
 
-Read: `src/claude_agent_sdk/_internal/query.py` — grep for `request_id`, count message types handled.
+Read: [`query.py`](../../src/claude_agent_sdk/_internal/query.py) — grep for `request_id`, count message types handled.
 **Verify:** All 4 points + code reference to request_id matching logic
 
 ### Step 4: DEEP — SDK MCP servers in-process (~15 phút)
@@ -73,10 +73,10 @@ Read: `src/claude_agent_sdk/_internal/query.py` — grep for `request_id`, count
 **Analysis:**
 1. **Nguyên lý:** Inversion of Control — SDK intercepts tool calls from CLI, executes locally, returns results
 2. **Tradeoff:** vs subprocess MCP (more isolated but slower IPC, more processes). In-process = zero-latency tool execution, shared Python state, but couples tool code to SDK process
-3. **History:** Check `__init__.py` for @tool/create_sdk_mcp_server evolution. Check query.py for interception logic.
+3. **History:** Check [`__init__.py`](../../src/claude_agent_sdk/__init__.py) for @tool/create_sdk_mcp_server evolution. Check [`query.py`](../../src/claude_agent_sdk/_internal/query.py) for interception logic.
 4. **Industry ref:** VSCode extensions (in-process), Webpack loaders (in-process transform), pytest plugins (in-process hooks)
 
-Read: `src/claude_agent_sdk/__init__.py` — @tool decorator, `src/claude_agent_sdk/_internal/query.py` — MCP call handling.
+Read: [`__init__.py`](../../src/claude_agent_sdk/__init__.py) — @tool decorator, [`query.py`](../../src/claude_agent_sdk/_internal/query.py) — MCP call handling.
 **Verify:** All 4 points + clear in-process vs subprocess tradeoff documented
 
 ### Step 5: BRIEF — 3 remaining decisions (~25 phút)
@@ -89,7 +89,7 @@ Read: `src/claude_agent_sdk/__init__.py` — @tool decorator, `src/claude_agent_
 **5b. Error hierarchy (ClaudeSDKError → CLIConnectionError → CLINotFoundError):**
 - Principle: Exception hierarchy — specific before general, categorized by cause
 - Industry ref: Python requests library (ConnectionError → HTTPError), boto3 exceptions
-- Read: `src/claude_agent_sdk/_errors.py` (56 LOC)
+- Read: [`_errors.py`](../../src/claude_agent_sdk/_errors.py) (56 LOC)
 
 **5c. Two entry points (query() stateless vs ClaudeSDKClient stateful):**
 - Principle: Facade pattern — simple API for simple use, full API for complex use
@@ -120,9 +120,9 @@ For each decision, note: "Original design choice" vs "Inherited from TS SDK" vs 
 - **Negative:** Given a decision inherited from TS SDK, When analyzed, Then tagged "inherited" with note on WHY TS SDK chose it
 
 ## 8. Technical Notes
-- request_id pattern: grep -c "request_id" in query.py to count usages
+- request_id pattern: grep -c "request_id" in [`query.py`](../../src/claude_agent_sdk/_internal/query.py) to count usages
 - Message types in control protocol: initialize, user_message, interrupt, permission, hook_callback, mcp
-- Error hierarchy in _errors.py is only 56 LOC — very concise, may not warrant deep analysis
+- Error hierarchy in [`_errors.py`](../../src/claude_agent_sdk/_errors.py) is only 56 LOC — very concise, may not warrant deep analysis
 
 ## 9. Risks
 - Over-attribution: assigning intent where none exists (SDK may just follow TS SDK conventions)
@@ -138,24 +138,24 @@ For each decision, note: "Original design choice" vs "Inherited from TS SDK" vs 
 ### [START] Auto-claimed from Task 3 completion
 
 ### DEEP 1: Always-Streaming Internal Design
-**Decision:** `self._is_streaming = True` hardcoded (subprocess_cli.py:44). Both query() and ClaudeSDKClient use `--input-format stream-json`.
+**Decision:** `self._is_streaming = True` hardcoded ([`subprocess_cli.py:44`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L44)). Both query() and ClaudeSDKClient use `--input-format stream-json`.
 **Nguyên lý:** Uniform Interface — single communication channel regardless of API surface.
 **Tradeoff:** vs batch mode (simpler, fewer moving parts) → BUT streaming enables: (1) real-time message delivery, (2) control protocol interleaving on same channel, (3) large agent configs via initialize request, (4) hooks + MCP that require bidirectional communication. Streaming is MANDATORY for the SDK's value proposition — without it, you just have `subprocess.run()`.
-**History:** `6ca3514 Initial Python SDK import` — streaming was there from day 1. Comment at subprocess_cli.py:42-43: "Always use streaming mode internally (matching TypeScript SDK)". Inherited from TS SDK by design.
+**History:** `6ca3514 Initial Python SDK import` — streaming was there from day 1. Comment at [`subprocess_cli.py:42-43`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L42-L43): "Always use streaming mode internally (matching TypeScript SDK)". Inherited from TS SDK by design.
 **Industry ref:** **LSP (Language Server Protocol)** — same JSON-over-stdin/stdout streaming pattern. Also: **MCP protocol** itself (JSON-RPC over stdio), **Docker CLI** (docker exec with streaming output). The pattern is proven for tool-wrapping scenarios where you need both structured requests AND streaming output.
 
 ### DEEP 2: Control Protocol via request_id Multiplexing
-**Decision:** SDK uses `request_id` (query.py:98-102) to multiplex control requests/responses over single stdin/stdout channel.
+**Decision:** SDK uses `request_id` ([`query.py:98-102`](../../src/claude_agent_sdk/_internal/query.py#L98-L102)) to multiplex control requests/responses over single stdin/stdout channel.
 **Nguyên lý:** Multiplexed Communication — one channel, many concurrent message types.
 **Tradeoff:** vs separate channels (dedicated pipe per message type → simpler matching but more IPC). vs REST API (no subprocess needed but loses CLI features, streaming, local tools). vs gRPC (typed schema but heavy dependency, overkill for single subprocess). request_id approach: minimal overhead (counter + dict), works with existing stdin/stdout, handles concurrent hooks + permissions + MCP in same stream.
 **History:** Core pattern unchanged since initial import. `pending_control_responses` (Event-based) and `pending_control_results` (dict-based) are the only state. Design is deliberately simple — no priority queues, no timeouts per request (except initialize_timeout).
 **Industry ref:** **JSON-RPC 2.0** — uses `id` field for request/response correlation, exact same pattern. **HTTP/2 stream IDs** — multiplex requests over single connection. **MCP protocol** specification — built on JSON-RPC, uses same id matching.
 
 ### DEEP 3: SDK MCP Servers In-Process
-**Decision:** @tool decorator creates MCP servers executed IN the SDK process. Query intercepts mcp_message at query.py:304, routes to in-process McpServer instead of subprocess.
+**Decision:** @tool decorator creates MCP servers executed IN the SDK process. Query intercepts mcp_message at [`query.py:304`](../../src/claude_agent_sdk/_internal/query.py#L304), routes to in-process McpServer instead of subprocess.
 **Nguyên lý:** Inversion of Control — CLI thinks it's talking to external MCP server, but SDK intercepts and executes locally.
 **Tradeoff:** vs subprocess MCP servers (more isolated — tool crash doesn't kill SDK, but slower IPC + resource overhead + complexity). vs embedding tool logic in prompts (simpler but no structured tool calling). In-process: zero-latency execution, shared Python state (access to app's data), single process deployment. Downside: heavy tools block event loop, tool crash = SDK crash.
-**History:** `242c719 Update MCP types to align with what Claude Code expects` — early commit shows MCP alignment was a priority. The in-process pattern emerged because Python MCP SDK lacks Transport abstraction (noted in code comment at query.py:394), forcing manual JSONRPC routing.
+**History:** `242c719 Update MCP types to align with what Claude Code expects` — early commit shows MCP alignment was a priority. The in-process pattern emerged because Python MCP SDK lacks Transport abstraction (noted in code comment at [`query.py:394`](../../src/claude_agent_sdk/_internal/query.py#L394)), forcing manual JSONRPC routing.
 **Industry ref:** **VSCode extensions** — run in-process within editor, similar interception pattern. **Webpack loaders** — transform code in-process during build. **pytest plugins** — hooks execute in same process. The pattern is standard for "plugin systems where latency matters more than isolation."
 
 ### BRIEF 4: Hook System (Observer Pattern)
@@ -167,7 +167,7 @@ For each decision, note: "Original design choice" vs "Inherited from TS SDK" vs 
 **Principle:** Exception Hierarchy — categorized by cause, specific before general.
 `ClaudeSDKError → CLIConnectionError → CLINotFoundError` (inheritance chain). `ProcessError`, `CLIJSONDecodeError`, `MessageParseError` (siblings).
 **Industry ref:** Python `requests` library (`ConnectionError → HTTPError`), `boto3` exceptions, `httpx` error hierarchy.
-**Note:** Only 56 LOC (_errors.py). Clean, minimal, Pythonic. CLINotFoundError includes helpful install instructions in message — UX decision, not just engineering.
+**Note:** Only 56 LOC ([`_errors.py`](../../src/claude_agent_sdk/_errors.py)). Clean, minimal, Pythonic. CLINotFoundError includes helpful install instructions in message — UX decision, not just engineering.
 
 ### BRIEF 6: Two Entry Points (Facade Pattern)
 **Principle:** Facade — `query()` for simple one-shot use, `ClaudeSDKClient` for full control.

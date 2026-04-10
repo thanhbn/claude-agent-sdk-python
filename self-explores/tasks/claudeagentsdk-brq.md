@@ -50,18 +50,18 @@ Read worklogs → extract: code tinh hoa, design principles, key patterns.
 3 shortcuts, each targeting DIFFERENT angle:
 
 **Shortcut 1 — Entry Point (đọc gì trước):**
-"Bắt đầu từ `types.py` — đây là spec sống. Mọi Message, ContentBlock, Option đều là dataclass. Hiểu types = hiểu API."
-- File: `src/claude_agent_sdk/types.py`
+"Bắt đầu từ [`types.py`](../../src/claude_agent_sdk/types.py) — đây là spec sống. Mọi Message, ContentBlock, Option đều là dataclass. Hiểu types = hiểu API."
+- File: [`types.py`](../../src/claude_agent_sdk/types.py)
 - Why: 1203 LOC, mọi thứ khác reference nó
 
 **Shortcut 2 — Pattern Recognition:**
-"Tìm `request_id` trong `query.py` — mỗi lần thấy nó là 1 kiểu message trong control protocol. Đếm = biết SDK nói gì với CLI."
-- File: `src/claude_agent_sdk/_internal/query.py`
+"Tìm `request_id` trong [`query.py`](../../src/claude_agent_sdk/_internal/query.py) — mỗi lần thấy nó là 1 kiểu message trong control protocol. Đếm = biết SDK nói gì với CLI."
+- File: [`query.py`](../../src/claude_agent_sdk/_internal/query.py)
 - Why: request_id pattern = map of all SDK↔CLI communication
 
 **Shortcut 3 — Gotcha Avoidance:**
 "Python keywords: `async_` không phải `async`, `continue_` không phải `continue`. SDK dùng trailing underscore rồi convert khi gửi CLI. Nếu hook output sai field name → silent failure."
-- File: `src/claude_agent_sdk/_internal/query.py:34-50` (_convert_hook_output_for_cli)
+- File: [`query.py:34-50`](../../src/claude_agent_sdk/_internal/query.py#L34-L50) (_convert_hook_output_for_cli)
 - Why: Đây là gotcha #1 — IDE autocomplete sẽ gợi ý `async` (wrong), cần `async_` (right)
 
 **Shortcut 4 (optional) — Architecture Mental Model:**
@@ -144,8 +144,8 @@ async def main():
 - **Negative:** Given no CLI binary, When user attempts exercise, Then thought experiment mode provides equivalent learning
 
 ## 8. Technical Notes
-- SDK version: check `src/claude_agent_sdk/_version.py`
-- @tool decorator: `src/claude_agent_sdk/__init__.py`
+- SDK version: check [`_version.py`](../../src/claude_agent_sdk/_version.py)
+- @tool decorator: [`__init__.py`](../../src/claude_agent_sdk/__init__.py)
 - Hook types: PreToolUse, PostToolUse, Stop, Notification, PermissionRequest (from types.py)
 - Python keyword gotcha: async_, continue_ in hook outputs
 
@@ -166,19 +166,19 @@ async def main():
 ### Mental Shortcuts (5)
 
 **Shortcut 1 — Entry Point: "Đọc types.py trước"**
-types.py (1203 LOC) là spec sống của SDK. `Message` union type (line 950), `ClaudeAgentOptions` (line 1035, 35+ fields), mọi hook type, content block type đều ở đây. Hiểu types.py = hiểu 80% API surface. Đọc 10 phút, tiết kiệm hàng giờ đoán.
+[`types.py`](../../src/claude_agent_sdk/types.py) (1203 LOC) là spec sống của SDK. `Message` union type ([line 950](../../src/claude_agent_sdk/types.py#L950)), [`ClaudeAgentOptions`](../../src/claude_agent_sdk/types.py#L1035) (line 1035, 35+ fields), mọi hook type, content block type đều ở đây. Hiểu [`types.py`](../../src/claude_agent_sdk/types.py) = hiểu 80% API surface. Đọc 10 phút, tiết kiệm hàng giờ đoán.
 
 **Shortcut 2 — Pattern Recognition: "Đếm request_id trong query.py"**
-Mỗi `request_id` usage trong `_internal/query.py` = 1 kiểu message trong control protocol. Grep `request_id` → thấy tất cả cách SDK nói chuyện với CLI: initialize, hook_callback, can_use_tool, mcp_message, interrupt. Đếm = biết hết capabilities.
+Mỗi `request_id` usage trong [`query.py`](../../src/claude_agent_sdk/_internal/query.py) = 1 kiểu message trong control protocol. Grep `request_id` → thấy tất cả cách SDK nói chuyện với CLI: initialize, hook_callback, can_use_tool, mcp_message, interrupt. Đếm = biết hết capabilities.
 
 **Shortcut 3 — Gotcha: "async_ KHÔNG PHẢI async"**
-Khi viết hook output, dùng `async_` (trailing underscore) và `continue_` — KHÔNG phải `async` và `continue` (Python keywords). SDK auto-convert qua `_convert_hook_output_for_cli()` (query.py:34-50). Sai tên field = silent failure, không có error. IDE autocomplete sẽ gợi ý sai.
+Khi viết hook output, dùng `async_` (trailing underscore) và `continue_` — KHÔNG phải `async` và `continue` (Python keywords). SDK auto-convert qua [`_convert_hook_output_for_cli()`](../../src/claude_agent_sdk/_internal/query.py#L34-L50) (query.py:34-50). Sai tên field = silent failure, không có error. IDE autocomplete sẽ gợi ý sai.
 
 **Shortcut 4 — Architecture Mental Model: "SDK = Translator"**
-Python async world ↔ CLI subprocess JSON world. `Query` = translator. `Transport` = pipe. `types.py` = dictionary. Mọi thứ SDK làm = translate Python calls thành JSON stdin, translate JSON stdout thành Python objects.
+Python async world ↔ CLI subprocess JSON world. `Query` = translator. `Transport` = pipe. [`types.py`](../../src/claude_agent_sdk/types.py) = dictionary. Mọi thứ SDK làm = translate Python calls thành JSON stdin, translate JSON stdout thành Python objects.
 
 **Shortcut 5 — Debug Strategy: "stderr → query.py → types.py"**
-Khi debug: (1) check Transport stderr first (CLI errors, binary not found), (2) query.py _handle_control_request (protocol errors, wrong subtype), (3) message_parser/types.py (parse errors, unknown message type). Follow the data flow.
+Khi debug: (1) check Transport stderr first (CLI errors, binary not found), (2) [`query.py`](../../src/claude_agent_sdk/_internal/query.py) _handle_control_request (protocol errors, wrong subtype), (3) [`message_parser.py`](../../src/claude_agent_sdk/_internal/message_parser.py)/[`types.py`](../../src/claude_agent_sdk/types.py) (parse errors, unknown message type). Follow the data flow.
 
 ### Exercises (3)
 
@@ -202,7 +202,7 @@ async for msg in query(prompt="What time is it?", options=options):
 ```
 Verify: Response mentions current time. Tool appears in conversation.
 Time: ~30 min.
-Thought experiment: "Trace @tool → SdkMcpTool dataclass (__init__.py:100) → create_sdk_mcp_server (__init__.py) → mcp_servers option → Query._handle_sdk_mcp_request (query.py:394+) → tool handler executes → result back to CLI. Which files touched? 3: __init__.py, query.py, types.py."
+Thought experiment: "Trace @tool → SdkMcpTool dataclass ([`__init__.py:100`](../../src/claude_agent_sdk/__init__.py#L100)) → [`create_sdk_mcp_server`](../../src/claude_agent_sdk/__init__.py) → mcp_servers option → Query._handle_sdk_mcp_request ([`query.py:394+`](../../src/claude_agent_sdk/_internal/query.py#L394)) → tool handler executes → result back to CLI. Which files touched? 3: [`__init__.py`](../../src/claude_agent_sdk/__init__.py), [`query.py`](../../src/claude_agent_sdk/_internal/query.py), [`types.py`](../../src/claude_agent_sdk/types.py)."
 
 **Exercise 2: Write PreToolUse hook (hands-on)**
 Principle: Observer pattern — intercept tool calls before execution.
@@ -224,13 +224,13 @@ async for msg in query(prompt="List files in current directory", options=options
 Verify: Hook fires before each tool use, prints tool_name.
 Gotcha test: Replace `continue_` with `continue` → SyntaxError (Python keyword).
 Time: ~45 min.
-Thought experiment: "CLI triggers PreToolUse → sends control_request with subtype=hook_callback → Query._handle_control_request (query.py:288) → looks up hook_callbacks dict → calls log_tool() → _convert_hook_output_for_cli converts continue_ → continue → sends control_response back to CLI."
+Thought experiment: "CLI triggers PreToolUse → sends control_request with subtype=hook_callback → Query._handle_control_request ([`query.py:288`](../../src/claude_agent_sdk/_internal/query.py#L288)) → looks up hook_callbacks dict → calls log_tool() → _convert_hook_output_for_cli converts continue_ → continue → sends control_response back to CLI."
 
 **Exercise 3: Error Hierarchy (thought experiment only)**
 Principle: Exception hierarchy — catch specific before general.
-Question: "If CLI binary is not found, which exception? Trace: query() → InternalClient → Transport.__init__ → _find_cli() → CLINotFoundError (subprocess_cli.py:88)."
-Follow-up: "If CLI found but crashes during execution? → ProcessError (_errors.py:25)."
-Follow-up: "If CLI sends malformed JSON? → CLIJSONDecodeError (_errors.py:42)."
+Question: "If CLI binary is not found, which exception? Trace: query() → InternalClient → Transport.__init__ → _find_cli() → CLINotFoundError ([`subprocess_cli.py:88`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L88))."
+Follow-up: "If CLI found but crashes during execution? → ProcessError ([`_errors.py:25`](../../src/claude_agent_sdk/_errors.py#L25))."
+Follow-up: "If CLI sends malformed JSON? → CLIJSONDecodeError ([`_errors.py:42`](../../src/claude_agent_sdk/_errors.py#L42))."
 Answer: In your app, catch `ClaudeSDKError` (base) to handle all, or specific subclasses for targeted handling.
 Time: ~15 min.
 
@@ -238,4 +238,4 @@ Time: ~15 min.
 - [x] 5 mental shortcuts (entry point, pattern recognition, gotcha, mental model, debug strategy)
 - [x] 3 exercises (2 hands-on + thought experiment, 1 thought-only)
 - [x] Each hands-on has thought experiment fallback
-- [x] API signatures verified against types.py:1035 (ClaudeAgentOptions) and types.py:491 (HookCallback)
+- [x] API signatures verified against [`types.py:1035`](../../src/claude_agent_sdk/types.py#L1035) (ClaudeAgentOptions) and [`types.py:491`](../../src/claude_agent_sdk/types.py#L491) (HookCallback)

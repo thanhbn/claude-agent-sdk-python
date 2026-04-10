@@ -211,7 +211,7 @@ Với mỗi mẫu/mẫu nên tránh, tham chiếu file ví dụ cụ thể minh 
 - `streaming_mode_ipython.py` dành cho ngữ cảnh IPython/Jupyter -- ghi chú môi trường thực thi khác
 - Thư viện demo Context7: `/anthropics/claude-agent-sdk-demos` (345 snippets)
 - Ma trận quyết định nên cân nhắc cả ràng buộc kỹ thuật và trải nghiệm lập trình viên (DX)
-- Anti-patterns nên tham chiếu các kiểu lỗi từ `_errors.py` khi áp dụng
+- Anti-patterns nên tham chiếu các kiểu lỗi từ [`_errors.py`](../../src/claude_agent_sdk/_errors.py) khi áp dụng
 
 ## 9. Rủi ro
 - **Rủi ro:** 50 phút có thể chật cho đọc 18 file + demo + tạo hướng dẫn toàn diện. **Giảm thiểu:** Đọc nhóm ví dụ; không quá 2 phút cho mỗi ví dụ đơn giản. Phân bổ 20 phút đọc, 30 phút phân tích và viết.

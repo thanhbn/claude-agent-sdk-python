@@ -23,14 +23,26 @@ sdk_version: 0.1.48
 ## 2. Feature Inventory (35+ ClaudeAgentOptions fields)
 
 ### Core Configuration
+
+> **Source:** Dataclass [`ClaudeAgentOptions`](../../src/claude_agent_sdk/types.py#L1035-L1103).
+> Các field được chuyển thành CLI flags trong [`_build_command()`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L166-L328).
+
 - `system_prompt` — custom or preset (`claude_code`), merged from old `custom_system_prompt` + `append_system_prompt`
+  - Định nghĩa: [`types.py:1040`](../../src/claude_agent_sdk/types.py#L1040) · CLI: [`subprocess_cli.py:170-181`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L170-L181)
 - `permission_mode` — `"default"` | `"acceptEdits"` | `"plan"` | `"bypassPermissions"`
+  - Định nghĩa: [`types.py:1042`](../../src/claude_agent_sdk/types.py#L1042) · CLI: [`subprocess_cli.py:221-222`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L221-L222)
 - `model` / `fallback_model` — model selection with automatic fallback (since v0.1.7)
+  - Định nghĩa: [`types.py:1048-1049`](../../src/claude_agent_sdk/types.py#L1048-L1049) · CLI: [`subprocess_cli.py:207-211`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L207-L211)
 - `max_turns` — limit conversation turns
+  - Định nghĩa: [`types.py:1045`](../../src/claude_agent_sdk/types.py#L1045) · CLI: [`subprocess_cli.py:198-199`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L198-L199)
 - `max_budget_usd` — spending cap in USD (since v0.1.6)
+  - Định nghĩa: [`types.py:1046`](../../src/claude_agent_sdk/types.py#L1046) · CLI: [`subprocess_cli.py:201-202`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L201-L202)
 - `cwd` — working directory (str or Path)
+  - Định nghĩa: [`types.py:1053`](../../src/claude_agent_sdk/types.py#L1053) · Subprocess cwd: [`subprocess_cli.py:49`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L49)
 - `cli_path` — custom CLI binary path
+  - Định nghĩa: [`types.py:1054`](../../src/claude_agent_sdk/types.py#L1054) · Resolved at init: [`subprocess_cli.py:46-48`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L46-L48)
 - `effort` — `"low"` | `"medium"` | `"high"` | `"max"` thinking effort
+  - Định nghĩa: [`types.py:1096`](../../src/claude_agent_sdk/types.py#L1096) · CLI: [`subprocess_cli.py:315-316`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L315-L316)
 
 ### Tool & Permission Control
 - `tools` — tool preset or custom list
@@ -118,7 +130,7 @@ sdk_version: 0.1.48
 - **Two release paths:** Automatic (CLI version bump triggers patch release) and Manual (GitHub Actions UI for minor/major bumps)
 - **Auto-release flow:** CLI bump commit → Test workflow → auto-release.yml → builds wheels → publishes to PyPI → creates git tag + GitHub Release
 - **Wheel targets:** 5 platforms (Linux x86_64, Linux aarch64, macOS ARM, macOS Intel, Windows AMD64)
-- **Two version numbers:** SDK version (`_version.py`) and bundled CLI version (`_cli_version.py`)
+- **Two version numbers:** SDK version ([`_version.py`](../../src/claude_agent_sdk/_version.py)) and bundled CLI version ([`_cli_version.py`](../../src/claude_agent_sdk/_cli_version.py))
 - **Required secrets:** `PYPI_API_TOKEN`, `ANTHROPIC_API_KEY` (for changelog + e2e tests), `DEPLOY_KEY`
 
 ### Development Workflow

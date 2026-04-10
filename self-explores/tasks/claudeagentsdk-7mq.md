@@ -35,7 +35,7 @@ Tạo sơ đồ ca sử dụng (Use Case diagram) UML với các actor được 
 
 **Đầu vào:**
 - `self-explores/context/use-case-guide.md` (từ task qw0) — ca sử dụng đã phân tích kèm ánh xạ actor
-- Bề mặt API công khai SDK từ `src/claude_agent_sdk/__init__.py` và `src/claude_agent_sdk/client.py`
+- Bề mặt API công khai SDK từ `src/claude_agent_sdk/__init__.py` và [`client.py`](../../src/claude_agent_sdk/_internal/client.py)
 
 **Đầu ra:**
 - Chính: file diagram draw.io (nếu MCP khả dụng) tại `self-explores/tasks/claudeagentsdk-7mq-usecase.drawio` hoặc tương đương

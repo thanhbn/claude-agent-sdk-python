@@ -85,8 +85,8 @@ sequenceDiagram
 ```
 
 **Điểm quan trọng từ mã nguồn:**
-- `query()` trong `query.py:11` tạo `InternalClient` và uỷ quyền cho `process_query()`
-- `InternalClient.process_query()` trong `_internal/client.py:44` điều phối toàn bộ vòng đời
+- `query()` trong [`query.py:11`](../../src/claude_agent_sdk/_internal/query.py#L11) tạo `InternalClient` và uỷ quyền cho `process_query()`
+- `InternalClient.process_query()` trong [`client.py:44`](../../src/claude_agent_sdk/_internal/client.py#L44) điều phối toàn bộ vòng đời
 - Transport luôn dùng `--input-format stream-json` (dòng 331 trong subprocess_cli.py)
 - Với string prompt, user message được ghi vào stdin sau initialize (client.py:126-133)
 - `wait_for_result_and_end_input()` giữ stdin mở nếu hooks/MCP servers cần giao tiếp hai chiều
@@ -192,8 +192,8 @@ sequenceDiagram
 
 **Điểm quan trọng từ mã nguồn:**
 - `ClaudeSDKClient.__aenter__()` gọi `connect()` không có prompt → dùng async generator rỗng (client.py:102-107)
-- `client.query()` trong `client.py:197` ghi user messages trực tiếp vào transport qua JSON
-- `receive_response()` trong `client.py:442` bọc `receive_messages()` và dừng sau `ResultMessage`
+- `client.query()` trong [`client.py:197`](../../src/claude_agent_sdk/_internal/client.py#L197) ghi user messages trực tiếp vào transport qua JSON
+- `receive_response()` trong [`client.py:442`](../../src/claude_agent_sdk/_internal/client.py#L442) bọc `receive_messages()` và dừng sau `ResultMessage`
 - `interrupt()` gửi control request với `subtype: "interrupt"` (query.py:536-538)
 - `__aexit__()` luôn gọi `disconnect()` → `query.close()` → `transport.close()`
 

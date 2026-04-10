@@ -30,12 +30,12 @@ Map mỗi finding từ Task 2 (Strategic Eval) đến exact file:line. Trích 3+
 **Input:**
 - Task 2 findings: Core Components list, Leverage Points list, Extension points list
 - Source files (key ones):
-  - `src/claude_agent_sdk/_internal/query.py` (678 LOC)
-  - `src/claude_agent_sdk/_internal/transport/subprocess_cli.py` (631 LOC)
-  - `src/claude_agent_sdk/__init__.py` (444 LOC)
-  - `src/claude_agent_sdk/types.py` (1203 LOC)
-  - `src/claude_agent_sdk/client.py` (498 LOC)
-  - `src/claude_agent_sdk/_internal/message_parser.py` (251 LOC)
+  - [`query.py`](../../src/claude_agent_sdk/_internal/query.py) (678 LOC)
+  - [`subprocess_cli.py`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py) (631 LOC)
+  - [`__init__.py`](../../src/claude_agent_sdk/__init__.py) (444 LOC)
+  - [`types.py`](../../src/claude_agent_sdk/types.py) (1203 LOC)
+  - [`client.py`](../../src/claude_agent_sdk/client.py) (498 LOC)
+  - [`message_parser.py`](../../src/claude_agent_sdk/_internal/message_parser.py) (251 LOC)
 
 **Output:**
 - Worklog with file:line mappings for each finding
@@ -86,18 +86,18 @@ Read each code block, measure exact LOC, annotate impact.
 Select 3+ best code excerpts that embody design principles. Candidates:
 
 **Candidate 1:** Query._handle_message() — the router that handles ALL message types from CLI
-- File: `_internal/query.py` — look for `_handle_message` or main dispatch logic
+- File: [`query.py`](../../src/claude_agent_sdk/_internal/query.py) — look for `_handle_message` or main dispatch logic
 - Principle: Single Responsibility + Strategy pattern — one method, many handlers
 - Why tinh hoa: This is the "brain" of the SDK — change this, change everything
 
 **Candidate 2:** @tool decorator + create_sdk_mcp_server() — cross-file pattern
-- File 1: `__init__.py` — @tool decorator definition
-- File 2: `_internal/query.py` — tool call interception
+- File 1: [`__init__.py`](../../src/claude_agent_sdk/__init__.py) — @tool decorator definition
+- File 2: [`query.py`](../../src/claude_agent_sdk/_internal/query.py) — tool call interception
 - Principle: Open/Closed — add tools WITHOUT modifying core
 - Why tinh hoa: Shows how SDK extends CLI capabilities in-process
 
 **Candidate 3:** SubprocessCLITransport._find_cli_binary() — binary discovery
-- File: `_internal/transport/subprocess_cli.py`
+- File: [`subprocess_cli.py`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py)
 - Principle: Robustness — bundled > PATH > known locations
 - Why tinh hoa: Graceful degradation, user never needs to configure
 
@@ -139,28 +139,28 @@ Read each candidate, extract 20-100 lines, annotate.
 
 | Finding | Class/Function | File:Line | LOC |
 |---------|----------------|-----------|-----|
-| C1 Query | `class Query` | `_internal/query.py:53` | 678 total |
-| C1.a initialize | `async def initialize()` | `_internal/query.py:119` | ~70 |
-| C1.b dispatch | `async def _handle_control_request()` | `_internal/query.py:236` | ~80 |
-| C2 Transport | `class SubprocessCLITransport` | `_internal/transport/subprocess_cli.py:33` | 631 total |
-| C2.a find_cli | `def _find_cli()` | `subprocess_cli.py:64-95` | 32 |
-| C2.b build_cmd | `def _build_command()` | `subprocess_cli.py:166` | ~100 |
-| C3 Types | `Message = UserMessage \| AssistantMessage \| ...` | `types.py:950-957` | Union def |
-| C4 Parser | `parse_message()` | `_internal/message_parser.py` | 251 total |
+| C1 Query | `class Query` | [`query.py:53`](../../src/claude_agent_sdk/_internal/query.py#L53) | 678 total |
+| C1.a initialize | `async def initialize()` | [`query.py:119`](../../src/claude_agent_sdk/_internal/query.py#L119) | ~70 |
+| C1.b dispatch | `async def _handle_control_request()` | [`query.py:236`](../../src/claude_agent_sdk/_internal/query.py#L236) | ~80 |
+| C2 Transport | `class SubprocessCLITransport` | [`subprocess_cli.py:33`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L33) | 631 total |
+| C2.a find_cli | `def _find_cli()` | [`subprocess_cli.py:64-95`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L64-L95) | 32 |
+| C2.b build_cmd | `def _build_command()` | [`subprocess_cli.py:166`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L166) | ~100 |
+| C3 Types | `Message = UserMessage \| AssistantMessage \| ...` | [`types.py:950-957`](../../src/claude_agent_sdk/types.py#L950-L957) | Union def |
+| C4 Parser | `parse_message()` | [`message_parser.py`](../../src/claude_agent_sdk/_internal/message_parser.py) | 251 total |
 
 ### [Step 3] Leverage Points → Exact File:Line
 
 | Finding | Location | LOC | Verified |
 |---------|----------|-----|----------|
-| L1 hook convert | `_internal/query.py:34-50` | 16 | `_convert_hook_output_for_cli()` — maps async_→async, continue_→continue |
-| L2 streaming bool | `_internal/transport/subprocess_cli.py:44` | 1 | `self._is_streaming = True` — hardcoded, forces stream-json mode |
-| L3 request_id | `_internal/query.py:98-102` | 5 | `pending_control_responses`, `pending_control_results`, `_request_counter` |
-| L4 dispatch | `_internal/query.py:236-305` | ~70 | `_handle_control_request()` — routes can_use_tool, hook_callback, mcp_message |
-| L5 find_cli | `_internal/transport/subprocess_cli.py:64-95` | 32 | Fallback chain: bundled → shutil.which → 6 known paths → CLINotFoundError |
+| L1 hook convert | [`query.py:34-50`](../../src/claude_agent_sdk/_internal/query.py#L34-L50) | 16 | `_convert_hook_output_for_cli()` — maps async_→async, continue_→continue |
+| L2 streaming bool | [`subprocess_cli.py:44`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L44) | 1 | `self._is_streaming = True` — hardcoded, forces stream-json mode |
+| L3 request_id | [`query.py:98-102`](../../src/claude_agent_sdk/_internal/query.py#L98-L102) | 5 | `pending_control_responses`, `pending_control_results`, `_request_counter` |
+| L4 dispatch | [`query.py:236-305`](../../src/claude_agent_sdk/_internal/query.py#L236-L305) | ~70 | `_handle_control_request()` — routes can_use_tool, hook_callback, mcp_message |
+| L5 find_cli | [`subprocess_cli.py:64-95`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L64-L95) | 32 | Fallback chain: bundled → shutil.which → 6 known paths → CLINotFoundError |
 
 ### [Step 4] Code Tinh Hoa — 3 excerpts
 
-#### Code Tinh Hoa 1: `_handle_control_request()` — The Brain (query.py:236-305)
+#### Code Tinh Hoa 1: `_handle_control_request()` — The Brain ([`query.py:236-305`](../../src/claude_agent_sdk/_internal/query.py#L236-L305))
 ```python
 async def _handle_control_request(self, request: SDKControlRequest) -> None:
     request_id = request["request_id"]
@@ -179,7 +179,7 @@ async def _handle_control_request(self, request: SDKControlRequest) -> None:
 **Tại sao tinh hoa:** Đây là "bản đồ" của MỌI THỨ SDK có thể làm. Thêm 1 `elif subtype ==` = thêm 1 capability. Xóa method này = SDK thành pipe thụ động. ~70 LOC mà chi phối 100% SDK↔CLI interaction.
 
 #### Code Tinh Hoa 2: Cross-file — @tool → Query intercept (2 files)
-**File 1:** `__init__.py:111-149` — @tool decorator
+**File 1:** [`__init__.py:111-149`](../../src/claude_agent_sdk/__init__.py#L111-L149) — @tool decorator
 ```python
 def tool(name, description, input_schema, annotations=None):
     def decorator(func):
@@ -187,7 +187,7 @@ def tool(name, description, input_schema, annotations=None):
                          input_schema=input_schema, handler=func, annotations=annotations)
     return decorator
 ```
-**File 2:** `_internal/query.py:304` — MCP interception
+**File 2:** [`query.py:304`](../../src/claude_agent_sdk/_internal/query.py#L304) — MCP interception
 ```python
 elif subtype == "mcp_message":
     # Route to in-process SDK MCP server (NOT subprocess)
@@ -195,7 +195,7 @@ elif subtype == "mcp_message":
 **Nguyên lý:** Open/Closed Principle — add tools WITHOUT modifying core.
 **Tại sao tinh hoa:** Decorator ở public API, interception ở internal Query. User chỉ thấy @tool, không biết Query đang intercept. SDK biến Python function thành MCP tool mà CLI "tưởng" là external server. Elegant deception.
 
-#### Code Tinh Hoa 3: `_find_cli()` — Graceful Degradation (subprocess_cli.py:64-95)
+#### Code Tinh Hoa 3: `_find_cli()` — Graceful Degradation ([`subprocess_cli.py:64-95`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L64-L95))
 ```python
 def _find_cli(self) -> str:
     bundled_cli = self._find_bundled_cli()  # 1st: bundled

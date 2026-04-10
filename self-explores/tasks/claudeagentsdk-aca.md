@@ -196,7 +196,7 @@ Cấu trúc dạng bảng:
 | File đầu ra Phase 2 chưa đầy đủ | Task 554, 7mq, qw0, hoặc fl0 chưa xong | Thiếu đầu vào cho tổng hợp | Ghi rõ phần thiếu trong tóm tắt: "Sơ đồ đang chờ — xem task 554" |
 | Tóm tắt vượt 500 từ | Quá nhiều chi tiết | Vi phạm tiêu chí chấp nhận | Cắt triệt để: bỏ ví dụ (dành cho cheatsheet), rút ngắn câu, dùng danh sách gạch đầu dòng |
 | Thao tác cheatsheet trùng với README | Ví dụ query cơ bản đã có trong README | Nội dung trùng lặp, không thêm giá trị | Tập trung cheatsheet vào mẫu KHÔNG có trong README: hooks, MCP, xử lý lỗi, interrupt, đa lượt |
-| Code snippets có lỗi cú pháp | API usage sai trong cheatsheet | Snippets không chạy được | Xác minh mỗi snippet theo kiểu API công khai SDK trong `types.py` và `__init__.py` |
+| Code snippets có lỗi cú pháp | API usage sai trong cheatsheet | Snippets không chạy được | Xác minh mỗi snippet theo kiểu API công khai SDK trong [`types.py`](../../src/claude_agent_sdk/types.py) và `__init__.py` |
 | _index.md chưa tồn tại | Lần đầu tạo điều hướng | Không có file để cập nhật | Tạo `_index.md` mới từ đầu với bảng điều hướng đầy đủ |
 
 ## 7. Tiêu chí chấp nhận (Acceptance Criteria)

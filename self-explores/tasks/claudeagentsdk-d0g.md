@@ -35,9 +35,9 @@ Tạo cây thư mục có chú thích cho tất cả 15 file src/*.py và truy v
 ## 3. Đầu vào / Đầu ra
 **Đầu vào:**
 - 15 file .py trong `src/claude_agent_sdk/` và `src/claude_agent_sdk/_internal/`:
-  - Công khai: `__init__.py`, `query.py`, `client.py`, `types.py`
-  - Nội bộ: `_internal/__init__.py`, `_internal/client.py`, `_internal/query.py`, `_internal/message_parser.py`, `_internal/sessions.py`, `_internal/_errors.py`
-  - Transport: `_internal/transport/__init__.py`, `_internal/transport/subprocess_cli.py`
+  - Công khai: `__init__.py`, [`query.py`](../../src/claude_agent_sdk/_internal/query.py), [`client.py`](../../src/claude_agent_sdk/_internal/client.py), [`types.py`](../../src/claude_agent_sdk/types.py)
+  - Nội bộ: `_internal/__init__.py`, [`client.py`](../../src/claude_agent_sdk/_internal/client.py), [`query.py`](../../src/claude_agent_sdk/_internal/query.py), [`message_parser.py`](../../src/claude_agent_sdk/_internal/message_parser.py), [`sessions.py`](../../src/claude_agent_sdk/_internal/sessions.py), [`_errors.py`](../../src/claude_agent_sdk/_errors.py)
+  - Transport: `_internal/transport/__init__.py`, [`subprocess_cli.py`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py)
   - (các file còn lại sẽ được phát hiện trong Bước 1)
 - Context7 MCP: `/anthropics/claude-agent-sdk-python` (51 snippets)
 
@@ -93,10 +93,10 @@ src/claude_agent_sdk/
 ### Bước 2: Truy vết luồng query() (~10 phút)
 Đọc các file theo thứ tự, theo dõi chuỗi gọi hàm:
 
-1. `src/claude_agent_sdk/query.py` -- Tìm chữ ký hàm `query()`, nó tạo/gọi gì
-2. `src/claude_agent_sdk/_internal/client.py` -- Tìm `InternalClient.process_query()`, cách nó tạo transport và Query
-3. `src/claude_agent_sdk/_internal/query.py` -- Tìm lớp `Query`, bắt tay `initialize()`, vòng lặp streaming message
-4. `src/claude_agent_sdk/_internal/transport/subprocess_cli.py` -- Tìm `SubprocessCLITransport`, cách nó sinh tiến trình CLI, pipe stdin/stdout
+1. [`query.py`](../../src/claude_agent_sdk/_internal/query.py) -- Tìm chữ ký hàm `query()`, nó tạo/gọi gì
+2. [`client.py`](../../src/claude_agent_sdk/_internal/client.py) -- Tìm `InternalClient.process_query()`, cách nó tạo transport và Query
+3. [`query.py`](../../src/claude_agent_sdk/_internal/query.py) -- Tìm lớp `Query`, bắt tay `initialize()`, vòng lặp streaming message
+4. [`subprocess_cli.py`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py) -- Tìm `SubprocessCLITransport`, cách nó sinh tiến trình CLI, pipe stdin/stdout
 
 Với mỗi bước, tài liệu hoá:
 - Chữ ký method (class.method với tham số chính)
@@ -114,7 +114,7 @@ Grep: "async def initialize" trong src/
 **Kiểm tra:** Luồng có 5+ bước, mỗi bước có tham chiếu file:class:method. Đi từ `query()` công khai đến sinh subprocess và quay lại qua yield message.
 
 ### Bước 3: Truy vết luồng ClaudeSDKClient (~10 phút)
-Đọc kỹ `src/claude_agent_sdk/client.py`. Truy vết:
+Đọc kỹ [`client.py`](../../src/claude_agent_sdk/_internal/client.py). Truy vết:
 
 1. `ClaudeSDKClient.__init__()` -- Khởi tạo, lưu trữ options
 2. `ClaudeSDKClient.__aenter__()` (hoặc `connect()`) -- Tạo transport, bắt tay khởi tạo
@@ -139,9 +139,9 @@ Grep: "control" trong src/_internal/query.py
 ### Bước 4: Truy vết luồng hooks (~10 phút)
 Truy vết hệ thống hooks từ đầu đến cuối:
 
-1. Tìm định nghĩa kiểu hook trong `types.py` -- PreToolUse, PostToolUse, Stop, v.v.
-2. Tìm đăng ký hook trong `client.py` hoặc `query.py` -- Cách callback Python được đăng ký
-3. Tìm `HookMatcher` hoặc logic dispatch hook trong `_internal/query.py` -- Cách callback hook từ CLI đến và được khớp
+1. Tìm định nghĩa kiểu hook trong [`types.py`](../../src/claude_agent_sdk/types.py) -- PreToolUse, PostToolUse, Stop, v.v.
+2. Tìm đăng ký hook trong [`client.py`](../../src/claude_agent_sdk/_internal/client.py) hoặc [`query.py`](../../src/claude_agent_sdk/_internal/query.py) -- Cách callback Python được đăng ký
+3. Tìm `HookMatcher` hoặc logic dispatch hook trong [`query.py`](../../src/claude_agent_sdk/_internal/query.py) -- Cách callback hook từ CLI đến và được khớp
 4. Truy vết thực thi callback -- Cách hàm async Python được gọi với dữ liệu hook
 5. Truy vết đường phản hồi -- Cách kết quả hook (cho phép/từ chối/sửa đổi) được gửi lại CLI
 
@@ -164,7 +164,7 @@ Truy vết hệ thống SDK MCP server:
 
 1. Tìm decorator `@tool` trong `__init__.py` -- Cách tool được định nghĩa
 2. Tìm `create_sdk_mcp_server()` trong `__init__.py` -- Cách MCP server được xây dựng từ định nghĩa tool
-3. Tìm tích hợp MCP server trong `_internal/query.py` -- Cách Query chặn tool call dành cho SDK MCP server
+3. Tìm tích hợp MCP server trong [`query.py`](../../src/claude_agent_sdk/_internal/query.py) -- Cách Query chặn tool call dành cho SDK MCP server
 4. Truy vết thực thi tool -- Cách tool call in-process được dispatch và kết quả trả về
 5. Tìm các message giao thức MCP -- Cách tool call/result chảy qua giao thức điều khiển
 
@@ -186,7 +186,7 @@ Lấy tài liệu Context7 bằng `mcp__context7__query-docs` với `/anthropics
 **Kiểm tra:** Ít nhất 1 ghi chú đối chiếu được thêm vào tài liệu đầu ra.
 
 ### Bước 7: Lập bản đồ lỗi + kiểu (~5 phút)
-Đọc `src/claude_agent_sdk/_internal/_errors.py` và `src/claude_agent_sdk/types.py`:
+Đọc [`_errors.py`](../../src/claude_agent_sdk/_errors.py) và [`types.py`](../../src/claude_agent_sdk/types.py):
 
 **Lỗi:** Tài liệu hoá cây lỗi:
 ```
@@ -229,7 +229,7 @@ ClaudeSDKError
 - Giao thức điều khiển dùng `request_id` để khớp request/response -- tìm trong _internal/query.py
 - Tránh từ khoá Python: `async_` ánh xạ thành `async` trên wire, `continue_` ánh xạ thành `continue`
 - Decorator `@tool` được định nghĩa trong `__init__.py`, không phải module riêng
-- `sessions.py` đọc từ `~/.claude/projects/` -- dùng cho dữ liệu session lịch sử, không phải quản lý session đang hoạt động
+- [`sessions.py`](../../src/claude_agent_sdk/_internal/sessions.py) đọc từ `~/.claude/projects/` -- dùng cho dữ liệu session lịch sử, không phải quản lý session đang hoạt động
 - Context7 chỉ có 51 snippets cho Python SDK source -- hạn chế nhưng hữu ích cho xác minh tổng quát
 
 ## 9. Rủi ro

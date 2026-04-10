@@ -30,7 +30,7 @@ Public API (query.py, client.py)
       → message_parser (251 LOC) — JSON → typed Python objects
 ```
 
-Type system: `types.py` (1203 LOC) — file lớn nhất, định nghĩa MỌI THỨ: Message union, ClaudeAgentOptions (35+ fields), hooks, content blocks.
+Type system: [`types.py`](../../src/claude_agent_sdk/types.py) (1203 LOC) — file lớn nhất, định nghĩa MỌI THỨ: Message union, ClaudeAgentOptions (35+ fields), hooks, content blocks.
 
 6 luồng chính: one-shot query, multi-turn session, SDK MCP tool call, hook callback dispatch, permission check, session history.
 
@@ -40,13 +40,13 @@ Type system: `types.py` (1203 LOC) — file lớn nhất, định nghĩa MỌI T
 
 Bốn thành phần mà xóa bất kỳ cái nào → SDK sụp đổ:
 
-**Query** (`_internal/query.py:53`, 678 LOC) — Bộ não. Quản lý toàn bộ bidirectional communication: request_id matching, hook dispatch, MCP interception, initialize handshake. Xóa = SDK thành pipe thụ động.
+**Query** ([`query.py:53`](../../src/claude_agent_sdk/_internal/query.py#L53), 678 LOC) — Bộ não. Quản lý toàn bộ bidirectional communication: request_id matching, hook dispatch, MCP interception, initialize handshake. Xóa = SDK thành pipe thụ động.
 
-**SubprocessCLITransport** (`_internal/transport/subprocess_cli.py:33`, 631 LOC) — Đường ống. Binary discovery (bundled > PATH > known paths), subprocess lifecycle, JSON buffered parsing. Xóa = không spawn được CLI.
+**SubprocessCLITransport** ([`subprocess_cli.py:33`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L33), 631 LOC) — Đường ống. Binary discovery (bundled > PATH > known paths), subprocess lifecycle, JSON buffered parsing. Xóa = không spawn được CLI.
 
-**types.py** (1203 LOC) — Từ điển. Message union (line 950), ClaudeAgentOptions (line 1035), mọi hook type, content block. Mọi file khác import từ đây. Xóa = mất type safety hoàn toàn.
+**[`types.py`](../../src/claude_agent_sdk/types.py)** (1203 LOC) — Từ điển. Message union ([line 950](../../src/claude_agent_sdk/types.py#L950)), ClaudeAgentOptions ([line 1035](../../src/claude_agent_sdk/types.py#L1035)), mọi hook type, content block. Mọi file khác import từ đây. Xóa = mất type safety hoàn toàn.
 
-**message_parser.py** (251 LOC) — Phiên dịch. JSON dict → typed Message objects. Forward-compatible (unknown types → None). Xóa = raw dicts thay vì typed objects.
+**[`message_parser.py`](../../src/claude_agent_sdk/_internal/message_parser.py)** (251 LOC) — Phiên dịch. JSON dict → typed Message objects. Forward-compatible (unknown types → None). Xóa = raw dicts thay vì typed objects.
 
 ---
 
@@ -54,25 +54,25 @@ Bốn thành phần mà xóa bất kỳ cái nào → SDK sụp đổ:
 
 Năm điểm tựa — mỗi cái chỉ vài dòng nhưng chi phối behavior lớn:
 
-**`_convert_hook_output_for_cli()`** (query.py:34-50, 16 LOC) — Mọi Python→CLI hook response đi qua đây. Maps `async_` → `async`, `continue_` → `continue`. Sai 1 mapping = silent failure cho TẤT CẢ hooks.
+**`_convert_hook_output_for_cli()`** ([`query.py:34-50`](../../src/claude_agent_sdk/_internal/query.py#L34-L50), 16 LOC) — Mọi Python→CLI hook response đi qua đây. Maps `async_` → `async`, `continue_` → `continue`. Sai 1 mapping = silent failure cho TẤT CẢ hooks.
 
-**`_is_streaming = True`** (subprocess_cli.py:44, 1 LOC) — Một boolean hardcoded. SDK LUÔN streaming internally. Thay thành False = mất bidirectional, mất hooks, mất MCP. Một dòng chi phối toàn bộ architecture.
+**`_is_streaming = True`** ([`subprocess_cli.py:44`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L44), 1 LOC) — Một boolean hardcoded. SDK LUÔN streaming internally. Thay thành False = mất bidirectional, mất hooks, mất MCP. Một dòng chi phối toàn bộ architecture.
 
-**request_id counter** (query.py:98-102, 5 LOC) — Multiplexed communication. Sai matching = responses lạc, deadlock.
+**request_id counter** ([`query.py:98-102`](../../src/claude_agent_sdk/_internal/query.py#L98-L102), 5 LOC) — Multiplexed communication. Sai matching = responses lạc, deadlock.
 
-**`_handle_control_request()` dispatch** (query.py:236, ~70 LOC) — Router cho MỌI THỨ CLI gửi SDK. Thêm 1 `elif subtype ==` = thêm 1 capability.
+**`_handle_control_request()` dispatch** ([`query.py:236`](../../src/claude_agent_sdk/_internal/query.py#L236), ~70 LOC) — Router cho MỌI THỨ CLI gửi SDK. Thêm 1 `elif subtype ==` = thêm 1 capability.
 
-**`_find_cli()` fallback chain** (subprocess_cli.py:64-95, 32 LOC) — bundled > shutil.which > 6 known paths. User KHÔNG CẦN configure. Tiny code, huge UX.
+**`_find_cli()` fallback chain** ([`subprocess_cli.py:64-95`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L64-L95), 32 LOC) — bundled > shutil.which > 6 known paths. User KHÔNG CẦN configure. Tiny code, huge UX.
 
 ---
 
 ## 4. Design Principles & Rationale
 
 ### Deep: Always-Streaming (LSP Pattern)
-SDK luôn dùng stream-json mode internally (subprocess_cli.py:44). Tại sao? Vì streaming là MANDATORY cho value proposition của SDK — without it, bạn chỉ có `subprocess.run()`. Streaming enables: real-time messages, control protocol interleaving, hooks, MCP. Industry parallel: **Language Server Protocol** — same JSON-over-stdio streaming.
+SDK luôn dùng stream-json mode internally ([`subprocess_cli.py:44`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py#L44)). Tại sao? Vì streaming là MANDATORY cho value proposition của SDK — without it, bạn chỉ có `subprocess.run()`. Streaming enables: real-time messages, control protocol interleaving, hooks, MCP. Industry parallel: **Language Server Protocol** — same JSON-over-stdio streaming.
 
 ### Deep: request_id Multiplexing (JSON-RPC Pattern)
-Single stdin/stdout channel, multiple concurrent request types. Counter + dict (query.py:98-102). Tại sao không separate channels? Vì one subprocess = two pipes (stdin/stdout) — thêm channel = thêm subprocess. Minimalist, proven by **JSON-RPC 2.0** (same id-based correlation).
+Single stdin/stdout channel, multiple concurrent request types. Counter + dict ([`query.py:98-102`](../../src/claude_agent_sdk/_internal/query.py#L98-L102)). Tại sao không separate channels? Vì one subprocess = two pipes (stdin/stdout) — thêm channel = thêm subprocess. Minimalist, proven by **JSON-RPC 2.0** (same id-based correlation).
 
 ### Deep: In-Process MCP (VSCode Extension Pattern)
 @tool decorator → SDK intercepts mcp_message → executes locally. CLI "tưởng" external server. Tại sao? Zero-latency, shared Python state, single-process deployment. Tradeoff: tool crash = SDK crash. Industry parallel: **VSCode extensions** — in-process for speed, subprocess for isolation.
@@ -91,11 +91,11 @@ query() for simple, ClaudeSDKClient for full control. Redis get() vs pipeline(),
 ## 5. Mental Shortcuts & Exercises
 
 ### Shortcuts
-1. **Đọc types.py trước** — 1203 LOC, spec sống, mọi thứ khác reference nó
-2. **Đếm request_id trong query.py** — mỗi usage = 1 kiểu message protocol
+1. **Đọc [`types.py`](../../src/claude_agent_sdk/types.py) trước** — 1203 LOC, spec sống, mọi thứ khác reference nó
+2. **Đếm request_id trong [`query.py`](../../src/claude_agent_sdk/_internal/query.py) ** — mỗi usage = 1 kiểu message protocol
 3. **async_ KHÔNG PHẢI async** — trailing underscore cho Python keywords, silent failure nếu sai
 4. **SDK = Translator** — Python async ↔ CLI subprocess JSON. Query = translator, Transport = pipe
-5. **Debug: stderr → query.py → types.py** — follow the data flow
+5. **Debug: stderr → [`query.py`](../../src/claude_agent_sdk/_internal/query.py) → [`types.py`](../../src/claude_agent_sdk/types.py)** — follow the data flow
 
 ### Exercises
 1. **@tool custom tool** — create_sdk_mcp_server, query with mcp_servers option. Principle: Open/Closed.

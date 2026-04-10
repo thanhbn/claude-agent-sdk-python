@@ -52,10 +52,10 @@ Your Python App
 
 | Most Important | File | Why |
 |---------------|------|-----|
-| `_internal/query.py` | ~500 lines | Central hub — routes all control messages |
-| `types.py` | ~800 lines | All public types — largest file |
-| `client.py` | ~400 lines | Full-featured stateful client |
-| `subprocess_cli.py` | ~400 lines | CLI lifecycle + JSON streaming |
+| [`query.py`](../../src/claude_agent_sdk/_internal/query.py) | ~500 lines | Central hub — routes all control messages |
+| [`types.py`](../../src/claude_agent_sdk/types.py) | ~800 lines | All public types — largest file |
+| [`client.py`](../../src/claude_agent_sdk/_internal/client.py) | ~400 lines | Full-featured stateful client |
+| [`subprocess_cli.py`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py) | ~400 lines | CLI lifecycle + JSON streaming |
 
 ## Diagrams Reference
 

@@ -24,7 +24,7 @@ Dịch nội dung 4 file worklog từ tiếng Anh sang tiếng Việt hoàn toà
 - **GIỮ NGUYÊN** (không dịch):
   - Tên class/function/method: `query()`, `ClaudeSDKClient`, `SubprocessCLITransport`
   - Code snippets, command lines
-  - File paths: `src/claude_agent_sdk/query.py`
+  - File paths: [`query.py`](../../src/claude_agent_sdk/_internal/query.py)
   - Mermaid syntax
   - URLs, task IDs (beads IDs)
   - Frontmatter YAML keys (chỉ dịch values nếu là text mô tả)

@@ -187,7 +187,21 @@ User Code                query.py           _internal/client.py      _internal/q
 
 7. CLI receives response → blocks tool use (deny) or continues (approve)
 ```
-
+```
+CLI stdout ──control_request──► _internal/query.py:196  _read_messages() nhận
+                                     │
+                                _internal/query.py:201  start_soon(_handle_control_request)
+                                     │
+                                _internal/query.py:288  subtype == "hook_callback"
+                                     │
+                                _internal/query.py:292  tìm callback trong dict (đăng ký ở :139)
+                                     │
+                                _internal/query.py:296  await callback(input, tool_use_id, ...)
+                                     │
+                                _internal/query.py:302  _convert_hook_output_for_cli()
+                                     │
+                                _internal/query.py:333  transport.write() ──► CLI stdin
+```
 **Hook events:** PreToolUse, PostToolUse, PostToolUseFailure, UserPromptSubmit, Stop, SubagentStart, SubagentStop, PreCompact, Notification, PermissionRequest
 
 **can_use_tool callback:** Similar flow but subtype is "can_use_tool" → callback returns PermissionResultAllow or PermissionResultDeny

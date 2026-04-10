@@ -302,14 +302,14 @@ graph TD
 
 | Thành phần | File | Dòng | Tầng | Vai trò |
 |-----------|------|-------|-------|------|
-| `query()` | `query.py` | 124 | API công khai | Điểm vào async generator một lần |
-| `ClaudeSDKClient` | `client.py` | ~400 | API công khai | Quản lý session hai chiều có trạng thái |
+| `query()` | [`query.py`](../../src/claude_agent_sdk/_internal/query.py) | 124 | API công khai | Điểm vào async generator một lần |
+| `ClaudeSDKClient` | [`client.py`](../../src/claude_agent_sdk/_internal/client.py) | ~400 | API công khai | Quản lý session hai chiều có trạng thái |
 | `@tool` + `create_sdk_mcp_server()` | `__init__.py` | 445 | API công khai | Định nghĩa MCP tool và factory server |
-| `InternalClient` | `_internal/client.py` | 146 | Nội bộ | Điều phối vòng đời query() |
-| `Query` | `_internal/query.py` | ~500 | Nội bộ | Xử lý giao thức điều khiển (phức tạp nhất) |
-| `MessageParser` | `_internal/message_parser.py` | ~200 | Nội bộ | JSON dict → đối tượng Message có kiểu |
-| `sessions` | `_internal/sessions.py` | ~150 | Nội bộ | Đọc session lịch sử |
-| `SubprocessCLITransport` | `_internal/transport/subprocess_cli.py` | ~400 | Transport | Vòng đời subprocess CLI + JSON streaming |
+| `InternalClient` | [`client.py`](../../src/claude_agent_sdk/_internal/client.py) | 146 | Nội bộ | Điều phối vòng đời query() |
+| `Query` | [`query.py`](../../src/claude_agent_sdk/_internal/query.py) | ~500 | Nội bộ | Xử lý giao thức điều khiển (phức tạp nhất) |
+| `MessageParser` | [`message_parser.py`](../../src/claude_agent_sdk/_internal/message_parser.py) | ~200 | Nội bộ | JSON dict → đối tượng Message có kiểu |
+| `sessions` | [`sessions.py`](../../src/claude_agent_sdk/_internal/sessions.py) | ~150 | Nội bộ | Đọc session lịch sử |
+| `SubprocessCLITransport` | [`subprocess_cli.py`](../../src/claude_agent_sdk/_internal/transport/subprocess_cli.py) | ~400 | Transport | Vòng đời subprocess CLI + JSON streaming |
 | `Transport` (trừu tượng) | `_internal/transport/__init__.py` | ~50 | Transport | Base trừu tượng (connect, write, read, close) |
-| `types.py` | `types.py` | ~800 | Xuyên suốt | Tất cả kiểu công khai (file lớn nhất) |
-| `_errors.py` | `_errors.py` | 57 | Xuyên suốt | Cây lỗi (Error hierarchy) |
+| [`types.py`](../../src/claude_agent_sdk/types.py) | [`types.py`](../../src/claude_agent_sdk/types.py) | ~800 | Xuyên suốt | Tất cả kiểu công khai (file lớn nhất) |
+| [`_errors.py`](../../src/claude_agent_sdk/_errors.py) | [`_errors.py`](../../src/claude_agent_sdk/_errors.py) | 57 | Xuyên suốt | Cây lỗi (Error hierarchy) |
